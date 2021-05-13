@@ -149,8 +149,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\AngelScript\angelscript\include;$(ProjectDir)..\AngelScript\add_on\scriptbuilder;$(ProjectDir)..\AngelScript\add_on\scriptarray;$(ProjectDir)..\AngelScript\add_on\scriptstdstring;$(ProjectDir)..\cereal\include;$(ProjectDir)..\digestpp;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)..\AngelScript\angelscript\lib;$(ProjectDir)..\AngelScript\add_on\scriptbuilder\x64\Release;$(ProjectDir)..\AngelScript\add_on\scriptarray\x64\Release;$(ProjectDir)..\AngelScript\add_on\scriptstdstring\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\Libraries\AngelScript\angelscript\include;$(ProjectDir)..\Libraries\AngelScript\add_on\scriptbuilder;$(ProjectDir)..\Libraries\AngelScript\add_on\scriptarray;$(ProjectDir)..\Libraries\AngelScript\add_on\scriptstdstring;$(ProjectDir)..\Libraries\cereal\include;$(ProjectDir)..\Libraries\digestpp;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\Libraries\AngelScript\angelscript\lib;$(ProjectDir)..\Libraries\AngelScript\add_on\scriptbuilder\x64\Release;$(ProjectDir)..\Libraries\AngelScript\add_on\scriptarray\x64\Release;$(ProjectDir)..\Libraries\AngelScript\add_on\scriptstdstring\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Mathematica|x64'">
     <LinkIncremental>false</LinkIncremental>

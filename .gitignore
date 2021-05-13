@@ -7,6 +7,12 @@
 *.o
 *.obj
 
+# Unix executable
+*.a
+*.o
+*.so.*
+
+
 # Precompiled Headers
 *.gch
 *.pch
@@ -27,6 +33,22 @@
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
+
+# User-specific files
+*.pdb
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+**/.vs/
+**/Debug/
+**/x64/
+**/AS_DEBUG/
+**/.idea/
+**/Mathlink/
+
+# Kernel dump
+*.mx
