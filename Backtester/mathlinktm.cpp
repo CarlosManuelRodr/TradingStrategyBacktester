@@ -1,6 +1,6 @@
 /*
  * This file automatically produced by mprep.exe from:
- *	C:\Users\hp\Documents\Programacion\GrammarBasedTradingStrategyV2\Modules\Backtester\mathlink.tm
+ *	C:\Users\hp\Documents\Programacion\TradingStrategyBacktester\Backtester\mathlink.tm
  * mprep Revision 19 Copyright (c) Wolfram Research, Inc. 1990-2020
  */
 
@@ -165,68 +165,68 @@ MLYDEFN( int, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 /********************************* end header *********************************/
 
 
-# line 1 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 1 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlink.tm"
 /****************************
 *                           *
 *    Dataset Management     *
 *                           *
 ****************************/
 
-# line 176 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
+# line 176 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlinktm.cpp"
 
 
-# line 47 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 47 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlink.tm"
 /****************************
 *                           *
 *     Dataset accesors      *
 *                           *
 ****************************/
 
-# line 186 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
+# line 186 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlinktm.cpp"
 
 
-# line 101 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 101 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlink.tm"
 /****************************
 *                           *
 *      Backtesting API      *
 *                           *
 ****************************/
 
-# line 196 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
+# line 196 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlinktm.cpp"
 
 
-# line 115 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 115 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlink.tm"
 /*************************************
 *    get_strategy_execution_data     *
 *************************************/
 
-# line 204 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
+# line 204 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlinktm.cpp"
 
 
-# line 143 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 143 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlink.tm"
 /*********************
 *    get_returns     *
 *********************/
 
-# line 212 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
+# line 212 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlinktm.cpp"
 
 
-# line 171 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 171 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlink.tm"
 /**********************************
 *    get_returns_for_all_stocks   *
 **********************************/
 
-# line 220 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
+# line 220 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlinktm.cpp"
 
 
-# line 199 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 199 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlink.tm"
 /****************************
 *                           *
 *          Testing          *
 *                           *
 ****************************/
 
-# line 230 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
+# line 230 "C:\\Users\\hp\\Documents\\Programacion\\TradingStrategyBacktester\\Backtester\\mathlinktm.cpp"
 
 
 void load_dataset_from_directory P(( const char * _tp1, const char * _tp2));

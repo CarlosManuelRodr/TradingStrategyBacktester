@@ -4,23 +4,107 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Backtester", "Backtester.vcxproj", "{9462CA19-2C9F-487F-B483-5836C04BFAC2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D794465B-9815-4AAA-A384-6E1C77549A3E} = {D794465B-9815-4AAA-A384-6E1C77549A3E}
+		{16963966-FB96-4CC8-84A6-CDF9E6443120} = {16963966-FB96-4CC8-84A6-CDF9E6443120}
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD} = {39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3} = {A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "angelscript", "..\Libraries\AngelScript\angelscript\projects\msvc2017\angelscript.vcxproj", "{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scriptarray", "..\Libraries\AngelScript\add_on\scriptarray\scriptarray.vcxproj", "{D794465B-9815-4AAA-A384-6E1C77549A3E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scriptbuilder", "..\Libraries\AngelScript\add_on\scriptbuilder\scriptbuilder.vcxproj", "{16963966-FB96-4CC8-84A6-CDF9E6443120}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scriptstdstring", "..\Libraries\AngelScript\add_on\scriptstdstring\scriptstdstring.vcxproj", "{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Mathematica_Debug|x64 = Mathematica_Debug|x64
+		Mathematica_Debug|x86 = Mathematica_Debug|x86
 		Mathematica|x64 = Mathematica|x64
+		Mathematica|x86 = Mathematica|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Debug|x64.ActiveCfg = Debug|x64
 		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Debug|x64.Build.0 = Debug|x64
+		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Debug|x86.ActiveCfg = Debug|Win32
+		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Debug|x86.Build.0 = Debug|Win32
 		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Mathematica_Debug|x64.ActiveCfg = Mathematica_Debug|x64
 		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Mathematica_Debug|x64.Build.0 = Mathematica_Debug|x64
+		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Mathematica_Debug|x86.ActiveCfg = Mathematica_Debug|Win32
+		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Mathematica_Debug|x86.Build.0 = Mathematica_Debug|Win32
 		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Mathematica|x64.ActiveCfg = Mathematica|x64
 		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Mathematica|x64.Build.0 = Mathematica|x64
+		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Mathematica|x86.ActiveCfg = Mathematica|Win32
+		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Mathematica|x86.Build.0 = Mathematica|Win32
 		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Release|x64.ActiveCfg = Release|x64
 		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Release|x64.Build.0 = Release|x64
+		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Release|x86.ActiveCfg = Release|Win32
+		{9462CA19-2C9F-487F-B483-5836C04BFAC2}.Release|x86.Build.0 = Release|Win32
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Debug|x64.ActiveCfg = Debug|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Debug|x64.Build.0 = Debug|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Debug|x86.ActiveCfg = Debug|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Mathematica_Debug|x64.ActiveCfg = Debug|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Mathematica_Debug|x64.Build.0 = Debug|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Mathematica_Debug|x86.ActiveCfg = Mathematica_Debug|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Mathematica|x64.ActiveCfg = Release|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Mathematica|x64.Build.0 = Release|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Mathematica|x86.ActiveCfg = Mathematica|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Release|x64.ActiveCfg = Release|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Release|x64.Build.0 = Release|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Release|x86.ActiveCfg = Release|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Debug|x64.ActiveCfg = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Debug|x64.Build.0 = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Debug|x86.ActiveCfg = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Mathematica_Debug|x64.ActiveCfg = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Mathematica_Debug|x64.Build.0 = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Mathematica_Debug|x86.ActiveCfg = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Mathematica_Debug|x86.Build.0 = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Mathematica|x64.ActiveCfg = Release|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Mathematica|x64.Build.0 = Release|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Mathematica|x86.ActiveCfg = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Mathematica|x86.Build.0 = Debug|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Release|x64.ActiveCfg = Release|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Release|x64.Build.0 = Release|x64
+		{D794465B-9815-4AAA-A384-6E1C77549A3E}.Release|x86.ActiveCfg = Release|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Debug|x64.ActiveCfg = Debug|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Debug|x64.Build.0 = Debug|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Debug|x86.ActiveCfg = Debug|Win32
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Debug|x86.Build.0 = Debug|Win32
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Mathematica_Debug|x64.ActiveCfg = Debug|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Mathematica_Debug|x64.Build.0 = Debug|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Mathematica_Debug|x86.ActiveCfg = Debug|Win32
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Mathematica_Debug|x86.Build.0 = Debug|Win32
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Mathematica|x64.ActiveCfg = Release|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Mathematica|x64.Build.0 = Release|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Mathematica|x86.ActiveCfg = Debug|Win32
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Mathematica|x86.Build.0 = Debug|Win32
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Release|x64.ActiveCfg = Release|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Release|x64.Build.0 = Release|x64
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Release|x86.ActiveCfg = Release|Win32
+		{16963966-FB96-4CC8-84A6-CDF9E6443120}.Release|x86.Build.0 = Release|Win32
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Debug|x64.ActiveCfg = Debug|x64
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Debug|x64.Build.0 = Debug|x64
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Debug|x86.ActiveCfg = Debug|Win32
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Debug|x86.Build.0 = Debug|Win32
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Mathematica_Debug|x64.ActiveCfg = Debug|x64
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Mathematica_Debug|x64.Build.0 = Debug|x64
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Mathematica_Debug|x86.ActiveCfg = Debug|Win32
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Mathematica_Debug|x86.Build.0 = Debug|Win32
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Mathematica|x64.ActiveCfg = Release|x64
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Mathematica|x64.Build.0 = Release|x64
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Mathematica|x86.ActiveCfg = Debug|Win32
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Mathematica|x86.Build.0 = Debug|Win32
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Release|x64.ActiveCfg = Release|x64
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Release|x64.Build.0 = Release|x64
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Release|x86.ActiveCfg = Release|Win32
+		{A4DD46A2-E1D1-4D3A-B1E8-1F5F19A58FF3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
