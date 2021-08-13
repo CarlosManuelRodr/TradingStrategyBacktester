@@ -25,7 +25,13 @@ double MedianPrice(OCHLVData<double> data);
 double PricePercentangeChangeOpenToClose(OCHLVData<double> data);
 double ClosingBias(OCHLVData<double> data);
 double ExtensionRatio(OCHLVData<double> data);
+double SMA(const std::vector<OCHLVData<double>>& data);
 double EMA(OCHLVData<double> data, double previous);
+double RSI(const std::vector<OCHLVData<double>>& data);
+double VWAP(const std::vector<OCHLVData<double>>& data);
+double OBV(const std::vector<OCHLVData<double>>& data);
+double ROC(const std::vector<OCHLVData<double>>& data);
+double MFI(const std::vector<OCHLVData<double>>& data);
 
 /// <summary>
 /// Calculate all the technical indicators from OCHLVData.
@@ -93,11 +99,31 @@ template<typename T> T CalculateQuantile(const std::vector<T>& inData, const T p
 /// <param name="timeSeries">List of OCHLVData.</param>
 /// <param name="window">Size of the partition window.</param>
 /// <returns>A list containing the time series of the requested indicator.</returns>
-template<typename T> std::vector<T> IndicatorTimeSeries(T (*TechIndFunction)(OCHLVData<double>), std::vector<OCHLVData<double>> timeSeries,
-                                                        const unsigned window = windowSize)
+template<typename T> std::vector<T> IndicatorTimeSeries(T (*TechIndFunction)(const std::vector<OCHLVData<double>>&), std::vector<OCHLVData<double>> timeSeries,
+    const unsigned window)
 {
     std::vector<T> output;
-    for (unsigned i = window - 1; i < timeSeries.size(); i++)
+    for (unsigned i = 0; i < timeSeries.size() - window; i++)
+    {
+        std::vector<OCHLVData<double>> subsample(timeSeries.begin() + i, timeSeries.begin() + i + window);
+        output.push_back(TechIndFunction(subsample));
+    }
+
+    return output;
+}
+
+/// <summary>
+/// Return a time series from a instant value indicator.
+/// </summary>
+/// <typeparam name="T">Indicator return type.</typeparam>
+/// <param name="TechIndFunction">Function pointer to the technical indicator.</param>
+/// <param name="timeSeries">List of OCHLVData.</param>
+/// <param name="window">Size of the partition window.</param>
+/// <returns>A list containing the time series of the requested indicator.</returns>
+template<typename T> std::vector<T> IndicatorTimeSeries(T (*TechIndFunction)(OCHLVData<double>), std::vector<OCHLVData<double>> timeSeries)
+{
+    std::vector<T> output;
+    for (unsigned i = 0; i < timeSeries.size(); i++)
         output.push_back(TechIndFunction(timeSeries[i]));
 
     return output;
@@ -111,11 +137,10 @@ template<typename T> std::vector<T> IndicatorTimeSeries(T (*TechIndFunction)(OCH
 /// <param name="timeSeries">List of OCHLVData.</param>
 /// <param name="window">Size of the partition window.</param>
 /// <returns>A list containing the time series of the requested indicator.</returns>
-template<typename T> std::vector<T> IndicatorTimeSeries(T(*TechIndFunction)(OCHLVData<double>, double), std::vector<OCHLVData<double>> timeSeries,
-                                                        const unsigned window = windowSize)
+template<typename T> std::vector<T> IndicatorTimeSeries(T(*TechIndFunction)(OCHLVData<double>, double), std::vector<OCHLVData<double>> timeSeries)
 {
     std::vector<T> output;
-    for (unsigned i = window - 1; i < timeSeries.size(); i++)
+    for (unsigned i = 0; i < timeSeries.size(); i++)
     {
         if (output.size() == 0)
             output.push_back(TechIndFunction(timeSeries[i], timeSeries[i].close));
@@ -134,14 +159,36 @@ template<typename T> std::vector<T> IndicatorTimeSeries(T(*TechIndFunction)(OCHL
 /// <param name="timeSeries">List of OCHLVData.</param>
 /// <param name="percentile">The percentile used to calculate the quantile.</param>
 /// <returns>A list containing the time series of the requested quantile indicator.</returns>
-template<typename T> std::vector<T> QuantileTimeSeries(T (*TechIndFunction)(OCHLVData<double>), std::vector<OCHLVData<double>> timeSeries, 
-                                                       double percentile)
+template<typename T> std::vector<T> QuantileTimeSeries(T(*TechIndFunction)(const std::vector<OCHLVData<double>>&), std::vector<OCHLVData<double>> timeSeries,
+    double percentile, const unsigned window = windowSize)
 {
-    const unsigned window = windowSize;
-    std::vector<T> indicatorTimeSeries = IndicatorTimeSeries(TechIndFunction, timeSeries, 1);
+    std::vector<T> indicatorTimeSeries = IndicatorTimeSeries(TechIndFunction, timeSeries, window);
 
     std::vector<T> quantileTimeSeries;
-    for (unsigned i = 0; i < indicatorTimeSeries.size() - window + 1; i++)
+    for (unsigned i = 0; i < indicatorTimeSeries.size() - window; i++)
+    {
+        std::vector<T> partition(indicatorTimeSeries.begin() + i, indicatorTimeSeries.begin() + i + window);
+        quantileTimeSeries.push_back(CalculateQuantile(partition, percentile));
+    }
+
+    return quantileTimeSeries;
+}
+
+/// <summary>
+/// Return a time series of the indicator quantile.
+/// </summary>
+/// <typeparam name="T">Indicator return type.</typeparam>
+/// <param name="TechIndFunction">Function pointer to the technical indicator.</param>
+/// <param name="timeSeries">List of OCHLVData.</param>
+/// <param name="percentile">The percentile used to calculate the quantile.</param>
+/// <returns>A list containing the time series of the requested quantile indicator.</returns>
+template<typename T> std::vector<T> QuantileTimeSeries(T (*TechIndFunction)(OCHLVData<double>), std::vector<OCHLVData<double>> timeSeries, 
+                                                       double percentile, const unsigned window = windowSize)
+{
+    std::vector<T> indicatorTimeSeries = IndicatorTimeSeries(TechIndFunction, timeSeries);
+
+    std::vector<T> quantileTimeSeries;
+    for (unsigned i = 0; i < indicatorTimeSeries.size() - window; i++)
     {
         std::vector<T> partition(indicatorTimeSeries.begin() + i, indicatorTimeSeries.begin() + i + window);
         quantileTimeSeries.push_back(CalculateQuantile(partition, percentile));
@@ -159,13 +206,12 @@ template<typename T> std::vector<T> QuantileTimeSeries(T (*TechIndFunction)(OCHL
 /// <param name="percentile">The percentile used to calculate the quantile.</param>
 /// <returns>A list containing the time series of the requested quantile indicator.</returns>
 template<typename T> std::vector<T> QuantileTimeSeries(T (*TechIndFunction)(OCHLVData<double>, T), std::vector<OCHLVData<double>> timeSeries,
-                                                       double percentile)
+                                                       double percentile, const unsigned window = windowSize)
 {
-    const unsigned window = windowSize;
-    std::vector<T> indicatorTimeSeries = IndicatorTimeSeries(TechIndFunction, timeSeries, 1);
+    std::vector<T> indicatorTimeSeries = IndicatorTimeSeries(TechIndFunction, timeSeries);
 
     std::vector<T> quantileTimeSeries;
-    for (unsigned i = 0; i < indicatorTimeSeries.size() - window + 1; i++)
+    for (unsigned i = 0; i < indicatorTimeSeries.size() - window; i++)
     {
         std::vector<T> partition(indicatorTimeSeries.begin() + i, indicatorTimeSeries.begin() + i + window);
         quantileTimeSeries.push_back(CalculateQuantile(partition, percentile));

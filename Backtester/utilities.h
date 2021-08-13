@@ -2,8 +2,6 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <algorithm>
-#include <numeric>
 #include <iomanip>
 
 /// <summary>
@@ -74,31 +72,34 @@ namespace utilities
         return streamObj.str();
     }
 
-    /// <summary>
-    /// Check if the vector v contains the key.
-    /// </summary>
-    template<typename T> bool VectorContainsQ(const std::vector<T>& v, const T& key)
+    // Source: https://stackoverflow.com/a/3418285
+    inline void ReplaceString(std::string& str, const std::string& from, const std::string& to)
     {
-        return std::find(v.begin(), v.end(), key) != v.end();
+        if (from.empty())
+            return;
+
+        size_t start_pos = 0;
+        while ((start_pos = str.find(from, start_pos)) != std::string::npos)
+        {
+            str.replace(start_pos, from.length(), to);
+            start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+        }
     }
 
-    /// <summary>
-    /// Return the sum of all the elements of the vector.
-    /// </summary>
-    /// <typeparam name="T">Numeric type.</typeparam>
-    template<typename T> T Total(const std::vector<T>& v)
+    inline std::vector<std::string> StringSplit(const std::string& s, const std::string& delimiter)
     {
-        const T init = static_cast<T>(0);
-        return std::accumulate(v.begin(), v.end(), init);
-    }
+        size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+        std::string token;
+        std::vector<std::string> res;
 
-    /// <summary>
-    /// Return the multiplication of all the elements of the vector.
-    /// </summary>
-    /// <typeparam name="T">Numeric type.</typeparam>
-    template<typename T> T Multiply(const std::vector<T>& v)
-    {
-        const T init = static_cast<T>(1);
-        return std::accumulate(v.begin(), v.end(), init, [](T n1, T n2) { return n1 * n2; });
+        while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos)
+        {
+            token = s.substr(pos_start, pos_end - pos_start);
+            pos_start = pos_end + delim_len;
+            res.push_back(token);
+        }
+
+        res.push_back(s.substr(pos_start));
+        return res;
     }
 }

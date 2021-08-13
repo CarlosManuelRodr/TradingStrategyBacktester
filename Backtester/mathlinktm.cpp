@@ -175,7 +175,7 @@ MLYDEFN( int, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 # line 176 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
 
 
-# line 39 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 47 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
 /****************************
 *                           *
 *     Dataset accesors      *
@@ -185,7 +185,7 @@ MLYDEFN( int, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 # line 186 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
 
 
-# line 93 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 101 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
 /****************************
 *                           *
 *      Backtesting API      *
@@ -195,7 +195,7 @@ MLYDEFN( int, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 # line 196 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
 
 
-# line 107 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 115 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
 /*************************************
 *    get_strategy_execution_data     *
 *************************************/
@@ -203,7 +203,7 @@ MLYDEFN( int, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 # line 204 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
 
 
-# line 135 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 143 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
 /*********************
 *    get_returns     *
 *********************/
@@ -211,7 +211,7 @@ MLYDEFN( int, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 # line 212 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
 
 
-# line 163 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 171 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
 /**********************************
 *    get_returns_for_all_stocks   *
 **********************************/
@@ -219,7 +219,7 @@ MLYDEFN( int, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 # line 220 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
 
 
-# line 191 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
+# line 199 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlink.tm"
 /****************************
 *                           *
 *          Testing          *
@@ -229,7 +229,7 @@ MLYDEFN( int, MLDefaultYielder, ( MLINK mlp, MLYieldParameters yp))
 # line 230 "C:\\Users\\hp\\Documents\\Programacion\\GrammarBasedTradingStrategyV2\\Modules\\Backtester\\mathlinktm.cpp"
 
 
-void load_dataset_from_directory P(( const char * _tp1));
+void load_dataset_from_directory P(( const char * _tp1, const char * _tp2));
 
 #if MLPROTOTYPES
 static int _tr0( MLINK mlp)
@@ -239,19 +239,22 @@ static int _tr0(mlp) MLINK mlp;
 {
 	int	res = 0;
 	const char * _tp1;
+	const char * _tp2;
 	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
-	if ( ! MLNewPacket(mlp) ) goto L1;
+	if ( ! MLGetString( mlp, &_tp2) ) goto L1;
+	if ( ! MLNewPacket(mlp) ) goto L2;
 
-	load_dataset_from_directory(_tp1);
+	load_dataset_from_directory(_tp1, _tp2);
 
 	res = 1;
+L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
 } /* _tr0 */
 
 
-void unload_dataset P(( void));
+void unload_dataset P(( const char * _tp1));
 
 #if MLPROTOTYPES
 static int _tr1( MLINK mlp)
@@ -260,22 +263,47 @@ static int _tr1(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
-		if( !mlp) return res; /* avoid unused parameter warning */
+	const char * _tp1;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
+	if ( ! MLNewPacket(mlp) ) goto L1;
 
-	unload_dataset();
+	unload_dataset(_tp1);
 
 	res = 1;
+L1:	MLReleaseString(mlp, _tp1);
 
-	return res;
+L0:	return res;
 } /* _tr1 */
 
 
-int get_number_of_loaded_stocks P(( void));
+void switch_to_dataset P(( const char * _tp1));
 
 #if MLPROTOTYPES
 static int _tr2( MLINK mlp)
 #else
 static int _tr2(mlp) MLINK mlp;
+#endif
+{
+	int	res = 0;
+	const char * _tp1;
+	if ( ! MLGetString( mlp, &_tp1) ) goto L0;
+	if ( ! MLNewPacket(mlp) ) goto L1;
+
+	switch_to_dataset(_tp1);
+
+	res = 1;
+L1:	MLReleaseString(mlp, _tp1);
+
+L0:	return res;
+} /* _tr2 */
+
+
+int get_number_of_loaded_stocks P(( void));
+
+#if MLPROTOTYPES
+static int _tr3( MLINK mlp)
+#else
+static int _tr3(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -287,15 +315,15 @@ static int _tr2(mlp) MLINK mlp;
 		MLPutFunction( mlp, "Abort", 0) : MLPutInteger( mlp, _rp0);
 
 	return res;
-} /* _tr2 */
+} /* _tr3 */
 
 
 void get_stock_names_of_dataset P(( void));
 
 #if MLPROTOTYPES
-static int _tr3( MLINK mlp)
+static int _tr4( MLINK mlp)
 #else
-static int _tr3(mlp) MLINK mlp;
+static int _tr4(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -306,15 +334,15 @@ static int _tr3(mlp) MLINK mlp;
 	res = 1;
 
 	return res;
-} /* _tr3 */
+} /* _tr4 */
 
 
 void get_date P(( const char * _tp1, int _tp2));
 
 #if MLPROTOTYPES
-static int _tr4( MLINK mlp)
+static int _tr5( MLINK mlp)
 #else
-static int _tr4(mlp) MLINK mlp;
+static int _tr5(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -330,15 +358,15 @@ static int _tr4(mlp) MLINK mlp;
 L2: L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr4 */
+} /* _tr5 */
 
 
 void get_dates_list P(( const char * _tp1));
 
 #if MLPROTOTYPES
-static int _tr5( MLINK mlp)
+static int _tr6( MLINK mlp)
 #else
-static int _tr5(mlp) MLINK mlp;
+static int _tr6(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -352,15 +380,15 @@ static int _tr5(mlp) MLINK mlp;
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr5 */
+} /* _tr6 */
 
 
 void get_indicator P(( const char * _tp1, const char * _tp2, int _tp3));
 
 #if MLPROTOTYPES
-static int _tr6( MLINK mlp)
+static int _tr7( MLINK mlp)
 #else
-static int _tr6(mlp) MLINK mlp;
+static int _tr7(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -379,15 +407,15 @@ L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr6 */
+} /* _tr7 */
 
 
 void get_indicator_timeseries P(( const char * _tp1, const char * _tp2));
 
 #if MLPROTOTYPES
-static int _tr7( MLINK mlp)
+static int _tr8( MLINK mlp)
 #else
-static int _tr7(mlp) MLINK mlp;
+static int _tr8(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -404,15 +432,15 @@ L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr7 */
+} /* _tr8 */
 
 
 void get_quantile_indicator P(( const char * _tp1, const char * _tp2, const char * _tp3, int _tp4));
 
 #if MLPROTOTYPES
-static int _tr8( MLINK mlp)
+static int _tr9( MLINK mlp)
 #else
-static int _tr8(mlp) MLINK mlp;
+static int _tr9(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -434,15 +462,15 @@ L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr8 */
+} /* _tr9 */
 
 
 void get_quantile_indicator_timeseries P(( const char * _tp1, const char * _tp2, const char * _tp3));
 
 #if MLPROTOTYPES
-static int _tr9( MLINK mlp)
+static int _tr10( MLINK mlp)
 #else
-static int _tr9(mlp) MLINK mlp;
+static int _tr10(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -462,15 +490,15 @@ L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr9 */
+} /* _tr10 */
 
 
 void get_strategy_values P(( const char * _tp1, const char * _tp2));
 
 #if MLPROTOTYPES
-static int _tr10( MLINK mlp)
+static int _tr11( MLINK mlp)
 #else
-static int _tr10(mlp) MLINK mlp;
+static int _tr11(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -487,15 +515,15 @@ L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr10 */
+} /* _tr11 */
 
 
 void get_strategy_execution_data_stoploss_profittake P(( const char * _tp1, const char * _tp2, double _tp3, double _tp4, double _tp5));
 
 #if MLPROTOTYPES
-static int _tr11( MLINK mlp)
+static int _tr12( MLINK mlp)
 #else
-static int _tr11(mlp) MLINK mlp;
+static int _tr12(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -518,15 +546,15 @@ L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr11 */
+} /* _tr12 */
 
 
 void get_strategy_execution_data_timestop_hit P(( const char * _tp1, const char * _tp2, int _tp3, double _tp4));
 
 #if MLPROTOTYPES
-static int _tr12( MLINK mlp)
+static int _tr13( MLINK mlp)
 #else
-static int _tr12(mlp) MLINK mlp;
+static int _tr13(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -547,15 +575,15 @@ L4: L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr12 */
+} /* _tr13 */
 
 
 void get_strategy_execution_data_markettiming P(( const char * _tp1, const char * _tp2, double _tp3));
 
 #if MLPROTOTYPES
-static int _tr13( MLINK mlp)
+static int _tr14( MLINK mlp)
 #else
-static int _tr13(mlp) MLINK mlp;
+static int _tr14(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -574,15 +602,15 @@ L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr13 */
+} /* _tr14 */
 
 
 void get_returns_stoploss_profittake P(( const char * _tp1, const char * _tp2, const char * _tp3, double _tp4, double _tp5, double _tp6, int _tp7));
 
 #if MLPROTOTYPES
-static int _tr14( MLINK mlp)
+static int _tr15( MLINK mlp)
 #else
-static int _tr14(mlp) MLINK mlp;
+static int _tr15(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -610,15 +638,15 @@ L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr14 */
+} /* _tr15 */
 
 
 void get_returns_timestop_hit P(( const char * _tp1, const char * _tp2, const char * _tp3, int _tp4, double _tp5, int _tp6));
 
 #if MLPROTOTYPES
-static int _tr15( MLINK mlp)
+static int _tr16( MLINK mlp)
 #else
-static int _tr15(mlp) MLINK mlp;
+static int _tr16(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -644,15 +672,15 @@ L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr15 */
+} /* _tr16 */
 
 
 void get_returns_markettiming P(( const char * _tp1, const char * _tp2, const char * _tp3, double _tp4, int _tp5));
 
 #if MLPROTOTYPES
-static int _tr16( MLINK mlp)
+static int _tr17( MLINK mlp)
 #else
-static int _tr16(mlp) MLINK mlp;
+static int _tr17(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -676,15 +704,15 @@ L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr16 */
+} /* _tr17 */
 
 
 void get_returns_for_all_stocks_stoploss_profittake P(( const char * _tp1, const char * _tp2, double _tp3, double _tp4, double _tp5, int _tp6));
 
 #if MLPROTOTYPES
-static int _tr17( MLINK mlp)
+static int _tr18( MLINK mlp)
 #else
-static int _tr17(mlp) MLINK mlp;
+static int _tr18(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -709,15 +737,15 @@ L6: L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr17 */
+} /* _tr18 */
 
 
 void get_returns_for_all_stocks_timestop_hit P(( const char * _tp1, const char * _tp2, int _tp3, double _tp4, int _tp5));
 
 #if MLPROTOTYPES
-static int _tr18( MLINK mlp)
+static int _tr19( MLINK mlp)
 #else
-static int _tr18(mlp) MLINK mlp;
+static int _tr19(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -740,15 +768,15 @@ L5: L4: L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr18 */
+} /* _tr19 */
 
 
 void get_returns_for_all_stocks_markettiming P(( const char * _tp1, const char * _tp2, double _tp3, int _tp4));
 
 #if MLPROTOTYPES
-static int _tr19( MLINK mlp)
+static int _tr20( MLINK mlp)
 #else
-static int _tr19(mlp) MLINK mlp;
+static int _tr20(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -769,15 +797,15 @@ L4: L3: L2:	MLReleaseString(mlp, _tp2);
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr19 */
+} /* _tr20 */
 
 
 void strategy_compilation_info P(( const char * _tp1));
 
 #if MLPROTOTYPES
-static int _tr20( MLINK mlp)
+static int _tr21( MLINK mlp)
 #else
-static int _tr20(mlp) MLINK mlp;
+static int _tr21(mlp) MLINK mlp;
 #endif
 {
 	int	res = 0;
@@ -791,7 +819,7 @@ static int _tr20(mlp) MLINK mlp;
 L1:	MLReleaseString(mlp, _tp1);
 
 L0:	return res;
-} /* _tr20 */
+} /* _tr21 */
 
 
 static struct func {
@@ -799,28 +827,29 @@ static struct func {
 	int   manual;
 	int   (*f_func)P((MLINK));
 	const char  *f_name;
-	} _tramps[21] = {
-		{ 1, 0, _tr0, "load_dataset_from_directory" },
-		{-1, 1, _tr1, "unload_dataset" },
-		{-1, 1, _tr2, "get_number_of_loaded_stocks" },
-		{-1, 1, _tr3, "get_stock_names_of_dataset" },
-		{ 2, 0, _tr4, "get_date" },
-		{ 1, 0, _tr5, "get_dates_list" },
-		{ 3, 0, _tr6, "get_indicator" },
-		{ 2, 0, _tr7, "get_indicator_timeseries" },
-		{ 4, 0, _tr8, "get_quantile_indicator" },
-		{ 3, 0, _tr9, "get_quantile_indicator_timeseries" },
-		{ 2, 0, _tr10, "get_strategy_values" },
-		{ 5, 0, _tr11, "get_strategy_execution_data_stoploss_profittake" },
-		{ 4, 0, _tr12, "get_strategy_execution_data_timestop_hit" },
-		{ 3, 0, _tr13, "get_strategy_execution_data_markettiming" },
-		{ 7, 0, _tr14, "get_returns_stoploss_profittake" },
-		{ 6, 0, _tr15, "get_returns_timestop_hit" },
-		{ 5, 0, _tr16, "get_returns_markettiming" },
-		{ 6, 0, _tr17, "get_returns_for_all_stocks_stoploss_profittake" },
-		{ 5, 0, _tr18, "get_returns_for_all_stocks_timestop_hit" },
-		{ 4, 0, _tr19, "get_returns_for_all_stocks_markettiming" },
-		{ 1, 0, _tr20, "strategy_compilation_info" }
+	} _tramps[22] = {
+		{ 2, 0, _tr0, "load_dataset_from_directory" },
+		{ 1, 0, _tr1, "unload_dataset" },
+		{ 1, 0, _tr2, "switch_to_dataset" },
+		{-1, 1, _tr3, "get_number_of_loaded_stocks" },
+		{-1, 1, _tr4, "get_stock_names_of_dataset" },
+		{ 2, 0, _tr5, "get_date" },
+		{ 1, 0, _tr6, "get_dates_list" },
+		{ 3, 0, _tr7, "get_indicator" },
+		{ 2, 0, _tr8, "get_indicator_timeseries" },
+		{ 4, 0, _tr9, "get_quantile_indicator" },
+		{ 3, 0, _tr10, "get_quantile_indicator_timeseries" },
+		{ 2, 0, _tr11, "get_strategy_values" },
+		{ 5, 0, _tr12, "get_strategy_execution_data_stoploss_profittake" },
+		{ 4, 0, _tr13, "get_strategy_execution_data_timestop_hit" },
+		{ 3, 0, _tr14, "get_strategy_execution_data_markettiming" },
+		{ 7, 0, _tr15, "get_returns_stoploss_profittake" },
+		{ 6, 0, _tr16, "get_returns_timestop_hit" },
+		{ 5, 0, _tr17, "get_returns_markettiming" },
+		{ 6, 0, _tr18, "get_returns_for_all_stocks_stoploss_profittake" },
+		{ 5, 0, _tr19, "get_returns_for_all_stocks_timestop_hit" },
+		{ 4, 0, _tr20, "get_returns_for_all_stocks_markettiming" },
+		{ 1, 0, _tr21, "strategy_compilation_info" }
 		};
 
 #define CARDOF_EVALSTRS 0
@@ -838,27 +867,28 @@ int MLInstall(mlp) MLINK mlp;
 {
 	int _res;
 	_res = MLConnect(mlp);
-	if (_res) _res = _definepattern(mlp, (char *)"BTLoadDataset[path_String]", (char *)"{ path }", 0);
-	if (_res) _res = _definepattern(mlp, (char *)"BTUnloadDataset[]", (char *)"Manual", 1);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetNumberOfLoadedStocks[]", (char *)"Manual", 2);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStockNamesOfDataset[]", (char *)"Manual", 3);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetDate[stock_String, time_Integer]", (char *)"{ stock, time }", 4);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetDates[stock_String]", (char *)"{ stock }", 5);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetIndicator[indicator_String, stock_String, time_Integer]", (char *)"{ indicator, stock, time }", 6);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetIndicatorTimeSeries[indicator_String, stock_String]", (char *)"{ indicator, stock }", 7);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetQuantileIndicator[indicator_String, percentile_String, stock_String, time_Integer]", (char *)"{ indicator, percentile, stock, time }", 8);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetQuantileIndicatorTimeSeries[indicator_String, percentile_String, stock_String]", (char *)"{ indicator, percentile, stock }", 9);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyValues[strategy_String, stock_String]", (char *)"{ strategy, stock }", 10);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyExecutionDataStoplossProfitTake[strategy_String, stock_String, profitTake_Real, stopLoss_Real, transactionCost_Real]", (char *)"{ strategy, stock, profitTake, stopLoss, transactionCost }", 11);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyExecutionDataTimestopHit[strategy_String, stock_String, timePeriod_Integer, transactionCost_Real]", (char *)"{ strategy, stock, timePeriod, transactionCost }", 12);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyExecutionDataMarketTiming[strategy_String, stock_String, transactionCost_Real]", (char *)"{ strategy, stock, transactionCost }", 13);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsStoplossProfitTake[returnType_String, strategy_String, stock_String, profitTake_Real, stopLoss_Real, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, stock, profitTake, stopLoss, transactionCost, minibatchSize }", 14);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsTimestopHit[returnType_String, strategy_String, stock_String, timePeriod_Integer, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, stock, profitTake, stopLoss, transactionCost, minibatchSize }", 15);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsMarketTiming[returnType_String, strategy_String, stock_String, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, stock, transactionCost, minibatchSize }", 16);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsAllStocksStoplossProfitTake[returnType_String, strategy_String, profitTake_Real, stopLoss_Real, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, profitTake, stopLoss, transactionCost, minibatchSize }", 17);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsAllStocksTimestopHit[returnType_String, strategy_String, timePeriod_Integer, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, timePeriod, transactionCost, minibatchSize }", 18);
-	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsAllStocksMarketTiming[returnType_String, strategy_String, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, transactionCost, minibatchSize }", 19);
-	if (_res) _res = _definepattern(mlp, (char *)"BTStrategyCompilationInfo[strategy_String]", (char *)"{ strategy }", 20);
+	if (_res) _res = _definepattern(mlp, (char *)"BTLoadDataset[path_String, identifier_String]", (char *)"{ path, identifier }", 0);
+	if (_res) _res = _definepattern(mlp, (char *)"BTUnloadDataset[identifier_String]", (char *)"{ identifier }", 1);
+	if (_res) _res = _definepattern(mlp, (char *)"BTSwitchToDataset[identifier_String]", (char *)"{ identifier }", 2);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetNumberOfLoadedStocks[]", (char *)"Manual", 3);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStockNamesOfDataset[]", (char *)"Manual", 4);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetDate[stock_String, time_Integer]", (char *)"{ stock, time }", 5);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetDates[stock_String]", (char *)"{ stock }", 6);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetIndicator[indicator_String, stock_String, time_Integer]", (char *)"{ indicator, stock, time }", 7);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetIndicatorTimeSeries[indicator_String, stock_String]", (char *)"{ indicator, stock }", 8);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetQuantileIndicator[indicator_String, percentile_String, stock_String, time_Integer]", (char *)"{ indicator, percentile, stock, time }", 9);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetQuantileIndicatorTimeSeries[indicator_String, percentile_String, stock_String]", (char *)"{ indicator, percentile, stock }", 10);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyValues[strategy_String, stock_String]", (char *)"{ strategy, stock }", 11);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyExecutionDataStoplossProfitTake[strategy_String, stock_String, profitTake_Real, stopLoss_Real, transactionCost_Real]", (char *)"{ strategy, stock, profitTake, stopLoss, transactionCost }", 12);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyExecutionDataTimestopHit[strategy_String, stock_String, timePeriod_Integer, transactionCost_Real]", (char *)"{ strategy, stock, timePeriod, transactionCost }", 13);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyExecutionDataMarketTiming[strategy_String, stock_String, transactionCost_Real]", (char *)"{ strategy, stock, transactionCost }", 14);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsStoplossProfitTake[returnType_String, strategy_String, stock_String, profitTake_Real, stopLoss_Real, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, stock, profitTake, stopLoss, transactionCost, minibatchSize }", 15);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsTimestopHit[returnType_String, strategy_String, stock_String, timePeriod_Integer, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, stock, profitTake, stopLoss, transactionCost, minibatchSize }", 16);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsMarketTiming[returnType_String, strategy_String, stock_String, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, stock, transactionCost, minibatchSize }", 17);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsAllStocksStoplossProfitTake[returnType_String, strategy_String, profitTake_Real, stopLoss_Real, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, profitTake, stopLoss, transactionCost, minibatchSize }", 18);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsAllStocksTimestopHit[returnType_String, strategy_String, timePeriod_Integer, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, timePeriod, transactionCost, minibatchSize }", 19);
+	if (_res) _res = _definepattern(mlp, (char *)"BTGetStrategyReturnsAllStocksMarketTiming[returnType_String, strategy_String, transactionCost_Real, minibatchSize_Integer: -1]", (char *)"{ returnType, strategy, transactionCost, minibatchSize }", 20);
+	if (_res) _res = _definepattern(mlp, (char *)"BTStrategyCompilationInfo[strategy_String]", (char *)"{ strategy }", 21);
 	if (_res) _res = MLPutSymbol( mlp, "End");
 	if (_res) _res = MLFlush( mlp);
 	return _res;
@@ -871,7 +901,7 @@ int MLDoCallPacket( MLINK mlp)
 int MLDoCallPacket( mlp) MLINK mlp;
 #endif
 {
-	return _MLDoCallPacket( mlp, _tramps, 21);
+	return _MLDoCallPacket( mlp, _tramps, 22);
 } /* MLDoCallPacket */
 
 /******************************* begin trailer ********************************/

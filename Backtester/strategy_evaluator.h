@@ -19,6 +19,11 @@ void set_strategy_evaluator_dataset(Dataset* dataset) noexcept;
 Dataset* get_strategy_evaluator_dataset() noexcept;
 
 /// <summary>
+/// Returns the list of stocks present in the strategy evaluator datadaset.
+/// </summary>
+std::vector<std::string> get_stocks_in_dataset() noexcept;
+
+/// <summary>
 /// Try to compile the strategy program and report compilation errors if any.
 /// </summary>
 /// <param name="strategyProgram">Program as string.</param>
@@ -39,7 +44,7 @@ std::vector<bool> run_strategy(const std::string& strategyProgram, const std::st
 /// <param name="strategyProgram">A string with the program to run.</param>
 /// <param name="pararellize">Run strategy for each stock in parallel?.</param>
 /// <returns>The result of the evaluations.</returns>
-std::vector<std::vector<bool>>run_strategy_for_all_stocks(const std::string& strategyProgram, bool pararellize = true);
+std::vector<std::vector<bool>> run_strategy_for_all_stocks(const std::string& strategyProgram, bool pararellize = true);
 
 /****************************
 *                           *

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "utilities.h"
+#include "vector_ops.h"
 
 /// <summary>
 /// Parse csv line to a vector.
@@ -24,10 +25,10 @@ template<typename T> std::vector<T> parse_csv_line(const std::string in, const b
     for (unsigned int i = 0; i < input.length(); i++)
     {
         char currentCharacter = input.at(i);
-        if (!ignoreNested && utilities::VectorContainsQ(beginNestSymbols, currentCharacter))
+        if (!ignoreNested && vectorops::VectorContainsQ(beginNestSymbols, currentCharacter))
             nestLevel++;
 
-        if (!ignoreNested && utilities::VectorContainsQ(endNestSymbols, currentCharacter))
+        if (!ignoreNested && vectorops::VectorContainsQ(endNestSymbols, currentCharacter))
             nestLevel--;
 
         if (nestLevel == 0 && input.at(i) == ',')

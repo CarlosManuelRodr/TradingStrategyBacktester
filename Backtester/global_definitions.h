@@ -1,3 +1,3 @@
 #pragma once
 
-const unsigned windowSize = 20;
+const unsigned windowSize = 40;

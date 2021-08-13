@@ -27,11 +27,16 @@ Dataset* get_strategy_evaluator_dataset() noexcept
     return strategyRunnerDataset;
 }
 
-/****************************
-*                           *
-* Observable implementation *
-*                           *
-****************************/
+vector<string> get_stocks_in_dataset() noexcept
+{
+    return utilities::Keys(*strategyRunnerDataset);
+}
+
+/*************************************
+*                                    *
+* Observable accesors implementation *
+*                                    *
+*************************************/
 
 string Date(string stock, int time)
 {

@@ -8,7 +8,9 @@
 #include "dataset_loader.h"
 #include "technical_indicators.h"
 #include "functional_map.h"
+#include "vector_ops.h"
 using namespace std;
+using namespace vectorops;
 
 /****************************
 *                           *
@@ -80,10 +82,15 @@ StockData load_stockdata(const string path)
     // Check if the serialized data directory exists.
     string serializedDataDir = filename_join({ get_app_directory(), "StockData" });
     if (!directory_exist(serializedDataDir))
-        create_directory("StockData");
+        create_directory(serializedDataDir);
+
+    string datasetDirectoryName = directory_name(file_directory(path));
+    string serializedDatasetDirectory = filename_join({ get_app_directory(), "StockData", datasetDirectoryName });
+    if (!directory_exist(serializedDatasetDirectory))
+        create_directory(serializedDatasetDirectory);
 
     // Look-up for the checksum table.
-    string checksumTablePath = filename_join({ get_app_directory(), "StockData", "ChecksumTable.json" });
+    string checksumTablePath = filename_join({ get_app_directory(), "StockData", datasetDirectoryName, "ChecksumTable.json" });
     if (file_exist(checksumTablePath))
     {
         // If it exists, deserialize it.
@@ -97,7 +104,7 @@ StockData load_stockdata(const string path)
         if (checksumTable[path] == calculate_file_checksum(path))
         {
             // Deserialize dataset and return it.
-            string serializedFilePath = filename_join({ get_app_directory(), "StockData", file_basename(path) + ".bin" });
+            string serializedFilePath = filename_join({ get_app_directory(), "StockData", datasetDirectoryName, file_basename(path) + ".bin" });
             if (file_exist(serializedFilePath))
             {
                 ifstream istock(serializedFilePath, ios::binary | ios::in);
@@ -119,16 +126,16 @@ StockData load_stockdata(const string path)
             // Parse dataset.
             vector<OCHLVData<double>> rawDataset = load_raw_dataset(path);
             loadedStockData = load_stockdata_from_raw(rawDataset);
-            loadedStockData.dates = IndicatorTimeSeries(Date, rawDataset);
+            loadedStockData.dates = Drop(IndicatorTimeSeries(Date, rawDataset), 2 * windowSize);
 
             // Serialize dataset.
-            ofstream os(filename_join({ get_app_directory(), "StockData", file_basename(path) + ".bin" }), ios::binary | ios::out);
+            ofstream os(filename_join({ get_app_directory(), "StockData", datasetDirectoryName, file_basename(path) + ".bin" }), ios::binary | ios::out);
             cereal::BinaryOutputArchive oarchive(os);
             oarchive(loadedStockData);
 
             // Update checksum
             checksumTable[path] = calculate_file_checksum(path);
-            ofstream checksumTableOS(filename_join({ get_app_directory(), "StockData", "ChecksumTable.json" }));
+            ofstream checksumTableOS(filename_join({ get_app_directory(), "StockData", datasetDirectoryName, "ChecksumTable.json" }));
             cereal::JSONOutputArchive oChecksumTableArchive(checksumTableOS);
             oChecksumTableArchive(checksumTable);
 
@@ -140,10 +147,10 @@ StockData load_stockdata(const string path)
         // Parse dataset.
         vector<OCHLVData<double>> rawDataset = load_raw_dataset(path);
         loadedStockData = load_stockdata_from_raw(rawDataset);
-        loadedStockData.dates = IndicatorTimeSeries(Date, rawDataset);
+        loadedStockData.dates = Drop(IndicatorTimeSeries(Date, rawDataset), 2 * windowSize);
 
         // Serialize dataset.
-        ofstream os(filename_join({ get_app_directory(), "StockData", file_basename(path) + ".bin" }), ios::binary | ios::out);
+        ofstream os(filename_join({ get_app_directory(), "StockData", datasetDirectoryName, file_basename(path) + ".bin" }), ios::binary | ios::out);
         cereal::BinaryOutputArchive oarchive(os);
         oarchive(loadedStockData);
 
@@ -152,7 +159,7 @@ StockData load_stockdata(const string path)
         checksumTable[path] = calculate_file_checksum(path);
 
         // Serialize checksum table.
-        ofstream checksumTableOS(filename_join({ get_app_directory(), "StockData", "ChecksumTable.json" }));
+        ofstream checksumTableOS(filename_join({ get_app_directory(), "StockData", datasetDirectoryName, "ChecksumTable.json" }));
         cereal::JSONOutputArchive oChecksumTableArchive(checksumTableOS);
         oChecksumTableArchive(checksumTable);
 

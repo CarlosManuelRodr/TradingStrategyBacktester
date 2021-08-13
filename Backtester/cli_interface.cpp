@@ -119,6 +119,7 @@ int main(int argc, char* argv[])
     }
 
     // Load dataset.
+    utilities::ReplaceString(datasetPath, "\\\\", "\\");
     Dataset dataset = load_dataset(datasetPath);
     set_strategy_evaluator_dataset(&dataset);
     vector<string> stockList = utilities::Keys(dataset);

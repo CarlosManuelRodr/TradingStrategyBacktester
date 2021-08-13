@@ -3,6 +3,7 @@
 #include <vector>
 #include <filesystem>
 #include <algorithm>
+#include "utilities.h"
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <unistd.h>
@@ -151,7 +152,7 @@ const std::string filesystemSeparator = "\\";
 /**
 * @brief Verifica si existe el directorio.
 */
-bool directory_exist(string path)
+bool directory_exist(const string& path)
 {
     const char* pzPath = path.c_str();
 #if defined(__linux__) || defined(__APPLE__)
@@ -180,10 +181,16 @@ bool directory_exist(string path)
 #endif
 }
 
+string directory_name(const string& path)
+{
+    vector<string> directories = utilities::StringSplit(path, filesystemSeparator);
+    return directories.back();
+}
+
 /**
 * @brief Verifica si existe el archivo.
 */
-bool file_exist(string fileName)
+bool file_exist(const string& fileName)
 {
     ifstream infile(fileName.c_str());
     bool res = infile.is_open();
@@ -232,23 +239,16 @@ std::string get_app_directory()
 #endif
 }
 
-/**
-* @brief Crea directorio si no existe.
-*/
-void create_directory(string directory_name)
+void create_directory(const string& directory_name)
 {
-    string path = get_app_directory() + filesystemSeparator + directory_name;
 #if defined(__linux__) || defined(__APPLE__)
-    if (directory_exist(path))
-        s_rmrf(path);
+    if (directory_exist(directory_name))
+        s_rmrf(directory_name);
 #endif
-    s_mkdir(path);
+    s_mkdir(directory_name);
 }
 
-/**
-* @brief Unión de ruta de archivo multiplataforma.
-*/
-string filename_join(initializer_list<string> path)
+string filename_join(const initializer_list<string>& path)
 {
     vector<string> pathList = path;
     string fullPath = pathList.front();
@@ -261,7 +261,7 @@ string filename_join(initializer_list<string> path)
     return fullPath;
 }
 
-string file_basename(const string path)
+string file_basename(const string& path)
 {
     string base_filename = path.substr(path.find_last_of("/\\") + 1);
     string::size_type const p(base_filename.find_last_of('.'));
@@ -269,12 +269,17 @@ string file_basename(const string path)
     return file_without_extension;
 }
 
-string file_extension(const string filepath)
+string file_directory(const string& path)
+{
+    return path.substr(0, path.find_last_of("/\\"));
+}
+
+string file_extension(const string& filepath)
 {
     return filepath.substr(filepath.find_last_of('.') + 1);
 }
 
-vector<string> files_in_directory(const string path)
+vector<string> files_in_directory(const string& path)
 {
     vector<string> output;
     for (const auto& entry : filesystem::directory_iterator(path))

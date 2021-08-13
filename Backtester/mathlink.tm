@@ -6,17 +6,25 @@
 
 :Begin:
 :Function:       load_dataset_from_directory
-:Pattern:        BTLoadDataset[path_String]
-:Arguments:      { path }
-:ArgumentTypes:  { String }
+:Pattern:        BTLoadDataset[path_String, identifier_String]
+:Arguments:      { path, identifier }
+:ArgumentTypes:  { String, String }
 :ReturnType:     Manual
 :End:
 
 :Begin:
 :Function:       unload_dataset
-:Pattern:        BTUnloadDataset[]
-:Arguments:      Manual
-:ArgumentTypes:  Manual
+:Pattern:        BTUnloadDataset[identifier_String]
+:Arguments:      { identifier }
+:ArgumentTypes:  { String }
+:ReturnType:     Manual
+:End:
+
+:Begin:
+:Function:       switch_to_dataset
+:Pattern:        BTSwitchToDataset[identifier_String]
+:Arguments:      { identifier }
+:ArgumentTypes:  { String }
 :ReturnType:     Manual
 :End:
 

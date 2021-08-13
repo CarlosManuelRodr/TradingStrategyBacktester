@@ -10,6 +10,7 @@
 #include <string>
 #include <chrono>
 #include <iterator>
+#include <unordered_map>
 #include "dataset_loader.h"
 #include "backtester_models.h"
 #include "filesystem.h"
@@ -26,7 +27,7 @@ using namespace std;
 *                           *
 ****************************/
 
-Dataset dataset;
+unordered_map<string, Dataset> dataset;
 
 /****************************
 *                           *
@@ -51,10 +52,12 @@ void MLPutNull(MLINK mlp)
 
 bool is_stock_in_dataset(string stockName)
 {
-    if (dataset.empty())
+    Dataset* currentDataset = get_strategy_evaluator_dataset();
+
+    if (currentDataset->empty())
         return false;
 
-    return !(dataset.find(stockName) == dataset.end());
+    return !(currentDataset->find(stockName) == currentDataset->end());
 }
 
 auto get_return_function(const char* returnFunctionName)
@@ -77,12 +80,15 @@ auto get_return_function(const char* returnFunctionName)
 *                           *
 ****************************/
 
-void load_dataset_from_directory(char const* path)
+void load_dataset_from_directory(char const* path, char const* identifier)
 {
-    if (directory_exist(path))
+    string stringPath(path);
+    utilities::ReplaceString(stringPath, "\\\\", "\\");
+
+    if (directory_exist(stringPath))
     {
         // Get all the files.
-        vector<string> files = files_in_directory(path);
+        vector<string> files = files_in_directory(stringPath);
 
         // Check if they all have a CSV extension.
         bool isDatasetValid = true;
@@ -97,8 +103,12 @@ void load_dataset_from_directory(char const* path)
 
         if (isDatasetValid)
         {
-            dataset = load_dataset(path);
-            set_strategy_evaluator_dataset(&dataset);
+            string identifierString(identifier);
+            if (identifierString == "")
+                identifierString = "Main";
+
+            dataset[identifierString] = load_dataset(stringPath);
+            set_strategy_evaluator_dataset(&dataset[identifierString]);
 
             MLPutSymbol(stdlink, "True");
             MLEndPacket(stdlink);
@@ -116,12 +126,30 @@ void load_dataset_from_directory(char const* path)
     }
 }
 
-void unload_dataset()
+void switch_to_dataset(char const* identifier)
 {
-    if (!dataset.empty())
+    string identifierString(identifier);
+    if (dataset.find(identifierString) != dataset.end())
     {
-        dataset.clear();
+        set_strategy_evaluator_dataset(&dataset[identifierString]);
 
+        MLPutSymbol(stdlink, "True");
+        MLEndPacket(stdlink);
+    }
+    else
+    {
+        MLPutSymbol(stdlink, "False");
+        MLEndPacket(stdlink);
+    }
+}
+
+void unload_dataset(char const* identifier)
+{
+    string identifierString(identifier);
+
+    if (dataset.find(identifierString) != dataset.end())
+    {
+        dataset.erase(identifierString);
         MLPutSymbol(stdlink, "True");
         MLEndPacket(stdlink);
     }
@@ -134,14 +162,15 @@ void unload_dataset()
 
 int get_number_of_loaded_stocks()
 {
-    return (int)dataset.size();
+    vector<string> stocks = get_stocks_in_dataset();
+    return (int)stocks.size();
 }
 
 void get_stock_names_of_dataset()
 {
-    if (!dataset.empty())
+    vector<string> stocks = get_stocks_in_dataset();
+    if (!stocks.empty())
     {
-        vector<string> stocks = utilities::Keys(dataset);
         MLPutStringList(stdlink, stocks);
         MLEndPacket(stdlink);
     }
@@ -281,8 +310,8 @@ void get_strategy_values(char const* strategyFunc, char const* stock)
 *    get_strategy_execution_data     *
 *                                    *
 *************************************/
-/// Returns the date and price where trading signals are executed.
 
+/// Returns the date and price where trading signals are executed.
 void get_strategy_execution_data_stoploss_profittake(char const* strategyFunc, char const* stock, double profitTake, double stopLoss, 
                                                      double transactionCost)
 {
@@ -492,7 +521,7 @@ void get_returns_for_all_stocks_stoploss_profittake(char const* returnFunctionNa
     string strategyFunctionString = strategyFunc;
     if ((int)strategyFunctionString.length() > 0)
     {
-        vector<string> stocks = utilities::Keys(dataset);
+        vector<string> stocks = get_stocks_in_dataset();
         vector<vector<bool>> allStockSignals = run_strategy_for_all_stocks(strategyFunc);
         vector<vector<StrategyExecutionData>> allBacktests = backtest_stoploss_profittake_allstocks(allStockSignals, profitTake,
                                                                                                     stopLoss, transactionCost, 
@@ -528,7 +557,7 @@ void get_returns_for_all_stocks_timestop_hit(char const* returnFunctionName, cha
     string strategyFunctionString = strategyFunc;
     if ((int)strategyFunctionString.length() > 0)
     {
-        vector<string> stocks = utilities::Keys(dataset);
+        vector<string> stocks = get_stocks_in_dataset();
         vector<vector<bool>> allStockSignals = run_strategy_for_all_stocks(strategyFunc);
         vector<vector<StrategyExecutionData>> allBacktests = backtest_timestop_hit_allstocks(allStockSignals, timePeriod,
                                                                                              transactionCost, minibatchSize);
@@ -562,7 +591,7 @@ void get_returns_for_all_stocks_markettiming(char const* returnFunctionName, cha
     string strategyFunctionString = strategyFunc;
     if ((int)strategyFunctionString.length() > 0)
     {
-        vector<string> stocks = utilities::Keys(dataset);
+        vector<string> stocks = get_stocks_in_dataset();
         vector<vector<bool>> allStockSignals = run_strategy_for_all_stocks(strategyFunc);
         vector<vector<StrategyExecutionData>> allBacktests = backtest_markettiming_allstocks(allStockSignals, transactionCost, minibatchSize);
 
