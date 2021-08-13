@@ -35,6 +35,7 @@
 # Executables
 *.out
 *.app
+/Build
 
 # User-specific files
 *.pdb
