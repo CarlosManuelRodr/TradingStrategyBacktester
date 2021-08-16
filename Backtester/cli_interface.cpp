@@ -46,9 +46,9 @@ const option::Descriptor usage[] =
     {EXECUTIONMODEL,  0, "e", "execution", Arg::Required, "  -e <execution_model>, \t--execution=<execution_model>  \tThe trading execution model. Possible values are: StopLossProfitTake, TimestopHit and MarketTiming." },
     {TRANSACTIONCOST,  0, "t", "transactioncost", Arg::None, "  -t <value>, \t--transactioncost=<value>  \tThe transaction cost as percentage. The default value is 0.0025." },
     {RETURNTYPE,  0, "r", "returntype", Arg::None, "  -r <return_type>, \t--returntype=<return_type>  \tSpecifies how to calculate the returns. Possible values are: SimpleReturns, LogReturns, and DivReturns." },
-    {PROFITTAKE, 0,"k", "profittake", Arg::None, "  -k <value>, \t--profittake=<value>  \tProfit Take value used if the execution model is set to StopLossProfitTake. The default value es 0.3." },
-    {STOPLOSS, 0,"l", "stoploss", Arg::None, "  -l <value>, \t--stoploss=<value>  \tStop Loss value used if the execution model is set to StopLossProfitTake. The default value es -0.3." },
-    {TIMEPERIOD, 0,"d", "timeperiod", Arg::None, "  -d <value>, \t--timeperiod=<value>  \tTime Period value used if the execution model is set to TimestopHit. The default value es 100." },
+    {PROFITTAKE, 0,"k", "profittake", Arg::None, "  -k <value>, \t--profittake=<value>  \tProfit Take value used if the execution model is set to StopLossProfitTake. The default value is 0.3." },
+    {STOPLOSS, 0,"l", "stoploss", Arg::None, "  -l <value>, \t--stoploss=<value>  \tStop Loss value used if the execution model is set to StopLossProfitTake. The default value is -0.3." },
+    {TIMEPERIOD, 0,"d", "timeperiod", Arg::None, "  -d <value>, \t--timeperiod=<value>  \tTime Period value used if the execution model is set to TimestopHit. The default value is 100." },
     {HELP, 0,"", "help", Arg::None,    "  \t--help  \tShow instructions." },
     {0,0,0,0,0,0}
 };
