@@ -83,3 +83,4 @@ On Windows you can compile by using the Visual Studio solution. If you want to c
 - [Angelscript](https://www.angelcode.com/angelscript/) Is the scripting backend where each strategy runs.
 - [The Lean Mean C++ Option Parser](http://optionparser.sourceforge.net/) Is used for the CLI version.
 - [ThreadPool](https://github.com/progschj/ThreadPool) Is used as safe parallelization method.
+- [Cereal](https://uscilab.github.io/cereal/) for serialization of the dataset.
