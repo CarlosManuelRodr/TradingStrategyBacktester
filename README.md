@@ -42,7 +42,7 @@ INSTRUCTIONS: Backtester [options]
   -k <value>,           --profittake=<value>           Profit Take value used if the execution model is set to StopLossProfitTake. The default value is 0.3.
   -l <value>,           --stoploss=<value>             Stop Loss value used if the execution model is set to StopLossProfitTake. The default value is -0.3.
   -d <value>,           --timeperiod=<value>           Time Period value used if the execution model is set to TimestopHit. The default value is 100.
-                        --help            Show instructions.
+                        --help                         Show instructions.
 ```
 
 ### Examples
