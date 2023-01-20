@@ -50,6 +50,8 @@
 **/AS_DEBUG/
 **/.idea/
 **/Mathlink/
+**/cmake-build-debug/
+**/cmake-build-release/
 
 # Kernel dump
 *.mx

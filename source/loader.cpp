@@ -14,7 +14,7 @@ using namespace std;
 *      Dataset loading      *
 ****************************/
 
-vector<OCHLVData> Loader::LoadRawDataset(const string& path)
+vector<OCHLVData> Loader::LoadRawData(const string& path)
 {
     ifstream inFile;
     inFile.open(path);
@@ -120,7 +120,7 @@ StockData Loader::LoadStockdata(const string& path)
         else // Parse the new version of the file, serialize it and update the checksum.
         {
             // Parse dataset.
-            vector<OCHLVData> rawDataset = LoadRawDataset(path);
+            vector<OCHLVData> rawDataset = LoadRawData(path);
             loadedStockData = LoadStockdataFromRaw(rawDataset);
             loadedStockData.dates = VectorOps::Drop(Indicator::IndicatorTimeSeries(Indicator::Date, rawDataset), 2 * windowSize);
 
@@ -141,7 +141,7 @@ StockData Loader::LoadStockdata(const string& path)
     else // If no checksum table is found, parse the dataset and create one.
     {   
         // Parse dataset.
-        vector<OCHLVData> rawDataset = LoadRawDataset(path);
+        vector<OCHLVData> rawDataset = LoadRawData(path);
         loadedStockData = LoadStockdataFromRaw(rawDataset);
         loadedStockData.dates = VectorOps::Drop(Indicator::IndicatorTimeSeries(Indicator::Date, rawDataset), 2 * windowSize);
 

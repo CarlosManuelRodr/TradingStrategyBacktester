@@ -16,7 +16,7 @@ public:
      * @param path Absolute path to csv file.
      * @return Vector of OCHLVData entries.
      */
-    static std::vector<OCHLVData> LoadRawDataset(const std::string &path);
+    static std::vector<OCHLVData> LoadRawData(const std::string &path);
 
     /**
      * Load StockData by calculating all the technical indicators from the raw OCHLVData.

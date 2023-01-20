@@ -235,7 +235,7 @@ void FileSystem::CreateDirectory(const string& directory_name)
 string FileSystem::FilenameJoin(const initializer_list<string>& path)
 {
     vector<string> pathList = path;
-    static string fullPath = pathList.front();
+    string fullPath = pathList.front();
 
     for (unsigned i = 1; i < pathList.size(); i++)
     {
