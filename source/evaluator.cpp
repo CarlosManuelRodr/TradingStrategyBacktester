@@ -1,6 +1,3 @@
-#include <angelscript.h>
-#include <scriptbuilder.h>
-#include <scriptstdstring.h>
 #include <cassert>
 #include "evaluator.h"
 using namespace std;
@@ -11,17 +8,17 @@ using namespace std;
 
 Dataset* strategyRunnerDataset = nullptr;
 
-void set_strategy_evaluator_dataset(Dataset* dataset) noexcept
+void Evaluator::SetStrategyEvaluatorDataset(Dataset& dataset) noexcept
 {
-    strategyRunnerDataset = dataset;
+    strategyRunnerDataset = &dataset;
 }
 
-Dataset* get_strategy_evaluator_dataset() noexcept
+Dataset* Evaluator::GetStrategyEvaluatorDataset() noexcept
 {
     return strategyRunnerDataset;
 }
 
-vector<string> get_stocks_in_dataset() noexcept
+vector<string> Evaluator::GetStocksInDataset() noexcept
 {
     return Utilities::Keys(*strategyRunnerDataset);
 }
@@ -30,32 +27,32 @@ vector<string> get_stocks_in_dataset() noexcept
 * Observable accessors implementation *
 **************************************/
 
-string Date(const string& stock, size_t time)
+string Evaluator::Date(const string& stock, size_t time)
 {
     return (*strategyRunnerDataset)[stock].dates[time];
 }
 
-vector<string> Dates(const string& stock)
+vector<string> Evaluator::Dates(const string& stock)
 {
     return (*strategyRunnerDataset)[stock].dates;
 }
 
-double Indicator(const string& indicatorName, const string& stock, size_t time)
+double Evaluator::Indicator(const string& indicatorName, const string& stock, size_t time)
 {
     return (*strategyRunnerDataset)[stock].indicators[indicatorName][time];
 }
 
-double IndQuantile(const string& indicatorName, const string& percentile, const string& stock, size_t time)
+double Evaluator::IndQuantile(const string& indicatorName, const string& percentile, const string& stock, size_t time)
 {
     return (*strategyRunnerDataset)[stock].quantileIndicators[percentile][indicatorName][time];
 }
 
-vector<double>& IndicatorTimeSeries(const string& indicatorName, const string& stock)
+vector<double>& Evaluator::IndicatorTimeSeries(const string& indicatorName, const string& stock)
 {
     return (*strategyRunnerDataset)[stock].indicators[indicatorName];
 }
 
-vector<double>& IndQuantileTimeSeries(const string& indicatorName, const string& percentile, const string& stock)
+vector<double>& Evaluator::IndQuantileTimeSeries(const string& indicatorName, const string& percentile, const string& stock)
 {
     return (*strategyRunnerDataset)[stock].quantileIndicators[percentile][indicatorName];
 }
@@ -76,12 +73,12 @@ const string program_part_B = R""""()
         return false;
 })"""";
 
-string strategy_to_function(const string& strategy) noexcept
+string Evaluator::strategyToFunction(const string& strategy)
 {
     return program_part_A + strategy + program_part_B;
 }
 
-void message_callback(const asSMessageInfo* msg, [[maybe_unused]] void* param) noexcept
+void Evaluator::messageCallback(const asSMessageInfo* msg, [[maybe_unused]] void* param)
 {
     const char* type = "[Scripting engine ERR]: ";
     if (msg->type == asMSGTYPE_WARNING)
@@ -92,73 +89,70 @@ void message_callback(const asSMessageInfo* msg, [[maybe_unused]] void* param) n
     printf("%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type, msg->message);
 }
 
-void scripting_engine_log(const string& log)
+void Evaluator::scriptingEngineLog(const string& log)
 {
     cout << "[Scripting engine LOG]: " << log << endl;
 }
 
-void scripting_engine_exception(const string& exception)
+void Evaluator::scriptingEngineException(const string& exception)
 {
     cout << "[Scripting engine EXCEPTION]: " << exception << endl;
 }
 
-string scripting_engine_log_str(const string& log)
+string Evaluator::scriptingEngineLogStr(const string& log)
 {
     return string("[Scripting engine LOG]: ") + log + "\n";
 }
 
-string scripting_engine_exception_str(const string& exception)
+string Evaluator::scriptingEngineExceptionStr(const string& exception)
 {
     return string("[Scripting engine EXCEPTION]: ") + exception + "\n";
 }
 
-string scripting_engine_program(const string& program)
+string Evaluator::scriptingEngineProgram(const string& program)
 {
     return string("\n[Strategy program]: ") + program + "\n";
 }
 
-void register_interface(asIScriptEngine* engine)
+void Evaluator::registerInterface(asIScriptEngine* engine)
 {
-    if (engine == nullptr)
-        return;
-
     int r;
     r = engine->RegisterGlobalFunction("double Indicator(string, string, int)",
-                                       asFUNCTIONPR(Indicator, (const string&, const string&, size_t), double),
+                                       asFUNCTIONPR(Evaluator::Indicator, (const string&, const string&, size_t), double),
                                        asCALL_CDECL);
     assert(r >= 0);
     r = engine->RegisterGlobalFunction("double IndQuantile(string, string, string, int)",
-                                       asFUNCTIONPR(IndQuantile, (const string&, const string&, const string&, size_t), double),
+                                       asFUNCTIONPR(Evaluator::IndQuantile, (const string&, const string&, const string&, size_t), double),
                                        asCALL_CDECL);
     assert(r >= 0);
 }
 
-asIScriptEngine* start_angelscript_engine()
+asIScriptEngine* Evaluator::startAngelscriptEngine()
 {
     // Create the script engine
     asIScriptEngine* engine = asCreateScriptEngine();
     if (engine == nullptr)
     {
-        scripting_engine_log("Couldn't start scripting engine.");
+        scriptingEngineLog("Couldn't start scripting engine.");
         return nullptr;
     }
 
     // Set the message callback to receive information on errors in human readable form.
-    const int r = engine->SetMessageCallback(asFUNCTION(message_callback), nullptr, asCALL_CDECL);
+    const int r = engine->SetMessageCallback(asFUNCTION(messageCallback), nullptr, asCALL_CDECL);
     if (r < 0)
     {
-        scripting_engine_log("Unrecoverable error while starting the engine.");
+        scriptingEngineLog("Unrecoverable error while starting the engine.");
         return nullptr;
     }
 
     RegisterStdString(engine);
-    register_interface(engine);
+    registerInterface(engine);
     engine->SetEngineProperty(asEP_AUTO_GARBAGE_COLLECT, false);
     engine->SetEngineProperty(asEP_BUILD_WITHOUT_LINE_CUES, true);
     return engine;
 }
 
-asIScriptFunction* compile_angelscript_strategy(asIScriptEngine* engine, const string& strategyProgram)
+asIScriptFunction* Evaluator::compileAngelscriptStrategy(asIScriptEngine* engine, const string& strategyProgram)
 {
     if (engine == nullptr)
         return nullptr;
@@ -172,7 +166,7 @@ asIScriptFunction* compile_angelscript_strategy(asIScriptEngine* engine, const s
     {
         // If the code fails here it is usually because there
         // is no more memory to allocate the module
-        scripting_engine_log("Unrecoverable error while starting a new module.");
+        scriptingEngineLog("Unrecoverable error while starting a new module.");
         return nullptr;
     }
     r = builder.AddSectionFromMemory("StrategyFunction", strategyProgram.c_str(), (unsigned) strategyProgram.size());
@@ -181,7 +175,7 @@ asIScriptFunction* compile_angelscript_strategy(asIScriptEngine* engine, const s
         // The builder wasn't able to load the file. Maybe the file
         // has been removed, or the wrong name was given, or some
         // preprocessing commands are incorrectly written.
-        scripting_engine_log("Please correct the errors in the script and try again.");
+        scriptingEngineLog("Please correct the errors in the script and try again.");
         return nullptr;
     }
     r = builder.BuildModule();
@@ -189,7 +183,7 @@ asIScriptFunction* compile_angelscript_strategy(asIScriptEngine* engine, const s
     {
         // An error occurred. Instruct the script writer to fix the
         // compilation errors that were listed in the output stream.
-        scripting_engine_log("Please correct the errors in the script and try again.");
+        scriptingEngineLog("Please correct the errors in the script and try again.");
         return nullptr;
     }
 
@@ -197,7 +191,7 @@ asIScriptFunction* compile_angelscript_strategy(asIScriptEngine* engine, const s
     const asIScriptModule* mod = engine->GetModule("StrategyModule");
     if (mod == nullptr)
     {
-        scripting_engine_log("Error getting StrategyModule.");
+        scriptingEngineLog("Error getting StrategyModule.");
         return nullptr;
     }
     asIScriptFunction* func = mod->GetFunctionByDecl("bool strategy_result(string, int)");
@@ -205,14 +199,15 @@ asIScriptFunction* compile_angelscript_strategy(asIScriptEngine* engine, const s
     {
         // The function couldn't be found. Instruct the script writer
         // to include the expected function in the script.
-        scripting_engine_log("The script must have the function 'bool strategy_result(string, int)'. Please add it and try again.");
+        scriptingEngineLog(
+                "The script must have the function 'bool strategy_result(string, int)'. Please add it and try again.");
         return nullptr;
     }
 
     return func;
 }
 
-bool execute_angelscript_strategy(asIScriptEngine* engine, asIScriptFunction* func, string stock, int dayIndex)
+bool Evaluator::executeAngelscriptStrategy(asIScriptEngine* engine, asIScriptFunction* func, string stock, int dayIndex)
 {
     // Create our context, prepare it, and then execute
     asIScriptContext* ctx = engine->CreateContext();
@@ -247,19 +242,19 @@ bool execute_angelscript_strategy(asIScriptEngine* engine, asIScriptFunction* fu
 *                                 *
 **********************************/
 
-vector<bool> run_strategy(const string& strategyProgram, const string& stock)
+vector<bool> Evaluator::RunStrategy(const string& strategyProgram, const string& stock)
 {
     vector<bool> strategyResults;
     const unsigned timePoints = (unsigned) Dates(stock).size();
 
     // Create the script engine
-    string strategyFunction = strategy_to_function(strategyProgram);
-    asIScriptEngine* engine = start_angelscript_engine();
-    asIScriptFunction* func = compile_angelscript_strategy(engine, strategyFunction);
+    string strategyFunction = strategyToFunction(strategyProgram);
+    asIScriptEngine* engine = startAngelscriptEngine();
+    asIScriptFunction* func = compileAngelscriptStrategy(engine, strategyFunction);
 
     for (int i = 0; i < timePoints; i++)
     {
-        bool result = execute_angelscript_strategy(engine, func, stock, i);
+        bool result = executeAngelscriptStrategy(engine, func, stock, i);
         strategyResults.push_back(result);
     }
 
@@ -272,9 +267,9 @@ vector<bool> run_strategy(const string& strategyProgram, const string& stock)
 *          Testing          *
 ****************************/
 
-string validate_strategy_program(const string& strategyProgram)
+string Evaluator::ValidateStrategyProgram(const string& strategyProgram)
 {
-    string strategyFunction = strategy_to_function(strategyProgram);
+    string strategyFunction = strategyToFunction(strategyProgram);
 
     // Create the script engine
     asIScriptEngine* engine = asCreateScriptEngine();
@@ -284,34 +279,34 @@ string validate_strategy_program(const string& strategyProgram)
     }
 
     // Set the message callback to receive information on errors in human-readable form.
-    int r = engine->SetMessageCallback(asFUNCTION(message_callback), nullptr, asCALL_CDECL);
+    int r = engine->SetMessageCallback(asFUNCTION(messageCallback), nullptr, asCALL_CDECL);
     if (r < 0)
     {
-        string log = scripting_engine_log_str("Unrecoverable error while starting the engine.");
-        return log + scripting_engine_program(strategyFunction);
+        string log = scriptingEngineLogStr("Unrecoverable error while starting the engine.");
+        return log + scriptingEngineProgram(strategyFunction);
     }
 
     RegisterStdString(engine);
-    register_interface(engine);
+    registerInterface(engine);
 
     CScriptBuilder builder;
     r = builder.StartNewModule(engine, "StrategyModule");
     if (r < 0)
     {
-        string log = scripting_engine_log_str("Unrecoverable error while starting a new module.");
-        return log + scripting_engine_program(strategyFunction);
+        string log = scriptingEngineLogStr("Unrecoverable error while starting a new module.");
+        return log + scriptingEngineProgram(strategyFunction);
     }
     r = builder.AddSectionFromMemory("StrategyFunction", strategyFunction.c_str(), (unsigned)strategyFunction.size());
     if (r < 0)
     {
-        string log = scripting_engine_log_str("Please correct the errors in the script and try again.");
-        return log + scripting_engine_program(strategyFunction);
+        string log = scriptingEngineLogStr("Please correct the errors in the script and try again.");
+        return log + scriptingEngineProgram(strategyFunction);
     }
     r = builder.BuildModule();
     if (r < 0)
     {
-        string log = scripting_engine_log_str("Please correct the errors in the script and try again.");
-        return log + scripting_engine_program(strategyFunction);
+        string log = scriptingEngineLogStr("Please correct the errors in the script and try again.");
+        return log + scriptingEngineProgram(strategyFunction);
     }
 
     // Find the function that is to be called.
@@ -319,13 +314,13 @@ string validate_strategy_program(const string& strategyProgram)
     if (mod == nullptr)
     {
         string log = "Error getting StrategyModule.";
-        return log + scripting_engine_program(strategyFunction);
+        return log + scriptingEngineProgram(strategyFunction);
     }
     const asIScriptFunction* func = mod->GetFunctionByDecl("bool strategy_result(string, int)");
     if (func == nullptr)
     {
-        string log = scripting_engine_log_str("The script must have the function 'bool strategy_result(string, int)'.");
-        return log + scripting_engine_program(strategyFunction);
+        string log = scriptingEngineLogStr("The script must have the function 'bool strategy_result(string, int)'.");
+        return log + scriptingEngineProgram(strategyFunction);
     }
 
     return {"The strategy program is OK." };

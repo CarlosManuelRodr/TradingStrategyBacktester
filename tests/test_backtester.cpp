@@ -8,10 +8,10 @@ using namespace std;
 TEST_CASE("Test strategy results")
 {
     Dataset dataset = Loader::LoadDataset("../dataset");
-    set_strategy_evaluator_dataset(&dataset);
+    Evaluator::SetStrategyEvaluatorDataset(dataset);
 
     string strategyProgram = R"(Indicator("EMA",stock,time)<Indicator("ClosePrice",stock,time))";
-    vector<bool> strategyResults = run_strategy(strategyProgram, "AAPL");
+    vector<bool> strategyResults = Evaluator::RunStrategy(strategyProgram, "AAPL");
 
     CHECK((strategyResults.at(13) == false));
     CHECK((strategyResults.at(14) == true));
