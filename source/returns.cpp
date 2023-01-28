@@ -23,14 +23,14 @@ double div_returns(double pSell, double pBuy, double transactionCost)
 }
 
 vector<double> calculate_returns(double (*returnFunction)(double, double, double),
-                                 const vector<StrategyExecutionData>& executionData, double transactionCost)
+                                 const vector<ExecutionData>& executionData, double transactionCost)
 {
     CalculateSimpleReturnsState state = CalculateSimpleReturnsState::ExpectingBuy;
     vector<double> returns;
     double buyPrice = 0.0;
     double sellPrice;
 
-    for (const StrategyExecutionData& execution : executionData)
+    for (const ExecutionData& execution : executionData)
     {
         if (state == CalculateSimpleReturnsState::ExpectingBuy)
         {
@@ -56,17 +56,17 @@ vector<double> calculate_returns(double (*returnFunction)(double, double, double
     return returns;
 }
 
-vector<double> Returns::SimpleReturns(const vector<StrategyExecutionData>& executionData, double transactionCost)
+vector<double> Returns::SimpleReturns(const vector<ExecutionData>& executionData, double transactionCost)
 {
     return calculate_returns(simple_returns, executionData, transactionCost);
 }
 
-vector<double> Returns::LogReturns(const vector<StrategyExecutionData>& executionData, double transactionCost)
+vector<double> Returns::LogReturns(const vector<ExecutionData>& executionData, double transactionCost)
 {
     return calculate_returns(log_returns, executionData, transactionCost);
 }
 
-vector<double> Returns::DivReturns(const vector<StrategyExecutionData>& executionData, double transactionCost)
+vector<double> Returns::DivReturns(const vector<ExecutionData>& executionData, double transactionCost)
 {
     return calculate_returns(div_returns, executionData, transactionCost);
 }

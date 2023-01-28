@@ -6,10 +6,10 @@ using namespace std;
 //*     backtest_stop-loss_profit-take     *
 //*****************************************/
 
-size_t find_entry_point(const vector<bool>& strategySignals, unsigned cursor)
+size_t Backtester::findEntryPoint(const vector<bool>& strategySignals, unsigned cursor)
 {
     // Lookup for the first true value.
-    for (unsigned i = cursor; i < strategySignals.size(); i++)
+    for (size_t i = cursor; i < strategySignals.size(); i++)
     {
         if (strategySignals[i])
             return i;
@@ -19,7 +19,7 @@ size_t find_entry_point(const vector<bool>& strategySignals, unsigned cursor)
     return strategySignals.size() - 1;
 }
 
-size_t exit_position(const string& stock, unsigned entryTime, double profitTake, double stopLoss, double transactionCost)
+size_t Backtester::exitPosition(const string& stock, unsigned entryTime, double profitTake, double stopLoss, double transactionCost)
 {
     vector<double>& closePrices = Evaluator::IndicatorTimeSeries("ClosePrice", stock);
 
@@ -37,11 +37,11 @@ size_t exit_position(const string& stock, unsigned entryTime, double profitTake,
     return closePrices.size() - 1;
 }
 
-vector<StrategyExecutionData> backtest_stoploss_profittake(const vector<bool>& strategySignals, const string& stock, double profitTake,
-                                                           double stopLoss, double transactionCost, int minibatchSize)
+vector<ExecutionData> Backtester::BacktestStoplossProfittake(const vector<bool>& strategySignals, const string& stock, double profitTake,
+                                                             double stopLoss, double transactionCost, int minibatchSize)
 {
-    vector<StrategyExecutionData> output;
-    size_t cursor, exitPosition;
+    vector<ExecutionData> output;
+    size_t cursor, exitIndex;
     size_t start, end;
 
     if (minibatchSize == -1)
@@ -66,10 +66,10 @@ vector<StrategyExecutionData> backtest_stoploss_profittake(const vector<bool>& s
 
     while (cursor < end)
     {
-        StrategyExecutionData buy, sell;
+        ExecutionData buy, sell;
 
-        cursor = find_entry_point(strategySignals, cursor);
-        exitPosition = exit_position(stock, cursor, profitTake, stopLoss, transactionCost);
+        cursor = findEntryPoint(strategySignals, cursor);
+        exitIndex = exitPosition(stock, cursor, profitTake, stopLoss, transactionCost);
 
         buy.signalType = StrategySignal::Buy;
         buy.timeIndex = cursor;
@@ -77,28 +77,28 @@ vector<StrategyExecutionData> backtest_stoploss_profittake(const vector<bool>& s
         buy.price = Evaluator::Indicator("ClosePrice", stock, cursor);
 
         sell.signalType = StrategySignal::Sell;
-        sell.timeIndex = exitPosition;
-        sell.time = Evaluator::Date(stock, exitPosition);
-        sell.price = Evaluator::Indicator("ClosePrice", stock, exitPosition);
+        sell.timeIndex = exitIndex;
+        sell.time = Evaluator::Date(stock, exitIndex);
+        sell.price = Evaluator::Indicator("ClosePrice", stock, exitIndex);
 
         output.push_back(buy);
         output.push_back(sell);
 
-        cursor = exitPosition + 1;
+        cursor = exitIndex + 1;
     }
 
     return output;
 }
 
 //*********************************
-//*     backtest_timestop_hit     *
+//*     BacktestTimestopHit     *
 //********************************/
 
-vector<StrategyExecutionData> backtest_timestop_hit(const vector<bool>& strategySignals, const string& stock,
-                                                    int timePeriod, double transactionCost, int minibatchSize)
+vector<ExecutionData> Backtester::BacktestTimestopHit(const vector<bool>& strategySignals, const string& stock,
+                                                      int timePeriod, int minibatchSize)
 {
-    unsigned start, end;
-    unsigned cursor, exitPosition;
+    size_t start, end;
+    size_t cursor, exitPosition;
 
     if (minibatchSize == -1)
     {
@@ -108,7 +108,7 @@ vector<StrategyExecutionData> backtest_timestop_hit(const vector<bool>& strategy
     else
     {
         if (minibatchSize >= strategySignals.size() - 1)
-            throw runtime_error("backtest_stoploss_profittake: minibatchSize is greater than the size of the dataset.");
+            throw runtime_error("BacktestStoplossProfittake: minibatchSize is greater than the size of the dataset.");
 
         random_device rd;
         mt19937 mt(rd());
@@ -119,13 +119,13 @@ vector<StrategyExecutionData> backtest_timestop_hit(const vector<bool>& strategy
     }
 
     cursor = start;
-    vector<StrategyExecutionData> output;
+    vector<ExecutionData> output;
 
     while (cursor < end)
     {
         if (strategySignals[cursor])
         {
-            StrategyExecutionData buy, sell;
+            ExecutionData buy, sell;
 
             if (cursor + timePeriod < end)
                 exitPosition = cursor + timePeriod;
@@ -157,108 +157,93 @@ vector<StrategyExecutionData> backtest_timestop_hit(const vector<bool>& strategy
 }
 
 //**********************************
-//*     backtest_market_timing     *
+//*     BacktestMarketTiming     *
 //*********************************/
 
-enum class TimingStrategySignal
+struct StateMachine
 {
-    NeutralHold,
-    EnterHold,
-    ExitHold,
-    Enter,
-    Exit
-};
+    TimingStrategySignal startState {};
+    std::vector<Transition> transitions {};
 
-struct Transition
-{
-    TimingStrategySignal parent;
-    TimingStrategySignal child;
-    bool input;
-};
-
-struct FSM
-{
-    TimingStrategySignal startState;
-    std::vector<Transition> transitions;
-};
-
-Transition create_fsm_transition(TimingStrategySignal parent, TimingStrategySignal child, bool input)
-{
-    Transition transition {};
-    transition.parent = parent;
-    transition.child = child;
-    transition.input = input;
-    return transition;
-}
-
-FSM init_strategy_signals_fsm()
-{
-    FSM strategySignalsFSM;
-
-    strategySignalsFSM.startState = TimingStrategySignal::NeutralHold;
-    strategySignalsFSM.transitions = vector<Transition>{
-            create_fsm_transition(TimingStrategySignal::NeutralHold, TimingStrategySignal::Enter, true),
-            create_fsm_transition(TimingStrategySignal::NeutralHold, TimingStrategySignal::NeutralHold, false),
-            create_fsm_transition(TimingStrategySignal::Enter, TimingStrategySignal::EnterHold, true),
-            create_fsm_transition(TimingStrategySignal::Enter, TimingStrategySignal::Exit, false),
-            create_fsm_transition(TimingStrategySignal::EnterHold, TimingStrategySignal::EnterHold, true),
-            create_fsm_transition(TimingStrategySignal::EnterHold, TimingStrategySignal::Exit, false),
-            create_fsm_transition(TimingStrategySignal::Exit, TimingStrategySignal::Enter, true),
-            create_fsm_transition(TimingStrategySignal::Exit, TimingStrategySignal::ExitHold, false),
-            create_fsm_transition(TimingStrategySignal::ExitHold, TimingStrategySignal::Enter, true),
-            create_fsm_transition(TimingStrategySignal::ExitHold, TimingStrategySignal::ExitHold, false)
-    };
-
-    return strategySignalsFSM;
-}
-
-TimingStrategySignal iterate_fsm(FSM& fsm, TimingStrategySignal state, bool inputValue)
-{
-    for (Transition& transition : fsm.transitions)
+    static Transition CreateTransition(TimingStrategySignal parent, TimingStrategySignal child, bool input)
     {
-        if (transition.parent == state && transition.input == inputValue)
-            return transition.child;
+        Transition transition {};
+        transition.parent = parent;
+        transition.child = child;
+        transition.input = input;
+        return transition;
     }
 
-    cout << "Error: No match in FSM engine." << endl;
-    return TimingStrategySignal();
-}
-
-vector<TimingStrategySignal> execute_fsm(FSM& fsm, const vector<bool>& inputValues)
-{
-    TimingStrategySignal state = fsm.startState;
-    vector<TimingStrategySignal> fsmStates;
-
-    for (bool value : inputValues)
+    static StateMachine Initialize()
     {
-        state = iterate_fsm(fsm, state, value);
-        fsmStates.push_back(state);
+        StateMachine strategySignalsFSM;
+
+        strategySignalsFSM.startState = TimingStrategySignal::NeutralHold;
+        strategySignalsFSM.transitions = vector<Transition>{
+                CreateTransition(TimingStrategySignal::NeutralHold, TimingStrategySignal::Enter, true),
+                CreateTransition(TimingStrategySignal::NeutralHold, TimingStrategySignal::NeutralHold, false),
+                CreateTransition(TimingStrategySignal::Enter, TimingStrategySignal::EnterHold, true),
+                CreateTransition(TimingStrategySignal::Enter, TimingStrategySignal::Exit, false),
+                CreateTransition(TimingStrategySignal::EnterHold, TimingStrategySignal::EnterHold, true),
+                CreateTransition(TimingStrategySignal::EnterHold, TimingStrategySignal::Exit, false),
+                CreateTransition(TimingStrategySignal::Exit, TimingStrategySignal::Enter, true),
+                CreateTransition(TimingStrategySignal::Exit, TimingStrategySignal::ExitHold, false),
+                CreateTransition(TimingStrategySignal::ExitHold, TimingStrategySignal::Enter, true),
+                CreateTransition(TimingStrategySignal::ExitHold, TimingStrategySignal::ExitHold, false)
+        };
+
+        return strategySignalsFSM;
     }
 
-    return fsmStates;
-}
+    static TimingStrategySignal Iterate(StateMachine& fsm, TimingStrategySignal state, bool inputValue)
+    {
+        for (Transition& transition : fsm.transitions)
+        {
+            if (transition.parent == state && transition.input == inputValue)
+                return transition.child;
+        }
 
-vector<TimingStrategySignal> get_timing_strategy_signals(vector<bool> strategyValues)
+        cout << "Error: No match in StateMachine engine." << endl;
+        return TimingStrategySignal();
+    }
+
+    static vector<TimingStrategySignal> Execute(StateMachine& fsm, const vector<bool>& inputValues)
+    {
+        TimingStrategySignal state = fsm.startState;
+        vector<TimingStrategySignal> fsmStates;
+
+        for (bool value : inputValues)
+        {
+            state = Iterate(fsm, state, value);
+            fsmStates.push_back(state);
+        }
+
+        return fsmStates;
+    }
+
+};
+
+vector<TimingStrategySignal> Backtester::getTimingStrategySignals(vector<bool> strategyValues)
 {
     // Set the last value as false to ensure it always exits its position.
     strategyValues.pop_back();
     strategyValues.push_back(false);
 
     // Transform strategyValues into TimingStrategySignal using a finite state machine.
-    FSM strategySignalsFSM = init_strategy_signals_fsm();
-    return execute_fsm(strategySignalsFSM, strategyValues);
+    StateMachine strategySignalsFSM = StateMachine::Initialize();
+    return StateMachine::Execute(strategySignalsFSM, strategyValues);
 }
 
-vector<StrategyExecutionData> backtest_market_timing(const vector<bool> &strategySignals, string stock, double transactionCost,
-                                                     int minibatchSize)
+vector<ExecutionData> Backtester::BacktestMarketTiming(const vector<bool> &strategySignals, const string& stock,
+                                                       int minibatchSize)
 {
-    vector<TimingStrategySignal> signals = get_timing_strategy_signals(strategySignals);
-    unsigned start, end;
+    vector<TimingStrategySignal> signals = getTimingStrategySignals(strategySignals);
+    size_t start, end;
 
     if (minibatchSize == -1)
     {
-        start = 0U;
-        end = (unsigned) signals.size();
+        start = 0;
+        end = signals.size();
     }
     else
     {
@@ -274,12 +259,12 @@ vector<StrategyExecutionData> backtest_market_timing(const vector<bool> &strateg
     }
 
     bool expectingEnter = true;
-    vector<StrategyExecutionData> strategyExecutionData;
-    for (unsigned i = start; i < end; i++)
+    vector<ExecutionData> strategyExecutionData;
+    for (size_t i = start; i < end; i++)
     {
         if (expectingEnter && signals[i] == TimingStrategySignal::Enter)
         {
-            StrategyExecutionData operation;
+            ExecutionData operation;
             operation.signalType = StrategySignal::Buy;
             operation.timeIndex = i;
             operation.time = Evaluator::Date(stock, i);
@@ -289,7 +274,7 @@ vector<StrategyExecutionData> backtest_market_timing(const vector<bool> &strateg
         }
         else if (!expectingEnter && signals[i] == TimingStrategySignal::Exit)
         {
-            StrategyExecutionData operation;
+            ExecutionData operation;
             operation.signalType = StrategySignal::Sell;
             operation.timeIndex = i;
             operation.time = Evaluator::Date(stock, i);

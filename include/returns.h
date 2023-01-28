@@ -11,7 +11,7 @@ enum class StrategySignal
 };
 
 /** Contains information about the execution of an order. */
-struct StrategyExecutionData
+struct ExecutionData
 {
     StrategySignal signalType;
     std::string time;
@@ -32,7 +32,7 @@ public:
      * @param transactionCost The percentage cost of each transaction.
      * @return The returns.
      */
-    static std::vector<double> SimpleReturns(const std::vector<StrategyExecutionData>& executionData, double transactionCost);
+    static std::vector<double> SimpleReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
 
     /**
      * Calculate a list of logarithmic returns from the results of backtesting.
@@ -40,7 +40,7 @@ public:
      * @param transactionCost The percentage cost of each transaction.
      * @return The returns.
      */
-    static std::vector<double> LogReturns(const std::vector<StrategyExecutionData>& executionData, double transactionCost);
+    static std::vector<double> LogReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
 
     /**
      * Calculate a list of percentage returns from the results of backtesting.
@@ -48,6 +48,6 @@ public:
      * @param transactionCost The percentage cost of each transaction.
      * @return The returns.
      */
-    static std::vector<double> DivReturns(const std::vector<StrategyExecutionData>& executionData, double transactionCost);
+    static std::vector<double> DivReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
 
 };
