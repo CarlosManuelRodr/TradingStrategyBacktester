@@ -3,9 +3,12 @@ project(TradingStrategyBacktester)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if(NOT DEFINED BUILD_TYPE)
+    set(BUILD_TYPE "Tests")
+endif()
+
 add_subdirectory(external/angelscript/angelscript/projects/cmake angelscript)
 
-include_directories(external/doctest/doctest)
 include_directories(external/cereal/include)
 include_directories(external/digestpp)
 include_directories(external/angelscript/angelscript/include)
@@ -13,35 +16,76 @@ include_directories(external/angelscript/add_on/scriptarray)
 include_directories(external/angelscript/add_on/scriptbuilder)
 include_directories(external/angelscript/add_on/scriptstdstring)
 
-add_executable(TradingStrategyBacktester
+if (BUILD_TYPE MATCHES Tests)
 
-        include/vector_ops.h
-        include/utilities.h
-        include/dataset.h
-        include/loader.h
-        include/indicators.h
-        include/evaluator.h
-        include/backtester.h
-        include/returns.h
+    message("Compiling unit tests" )
+    include_directories(external/doctest/doctest)
 
-        include/filesystem.h
-        source/filesystem.cpp
-        source/loader.cpp
-        source/indicators.cpp
-        source/evaluator.cpp
-        source/backtester.cpp
-        source/returns.cpp
+    add_executable(TradingStrategyBacktester
 
-        external/angelscript/add_on/scriptarray/scriptarray.cpp
-        external/angelscript/add_on/scriptbuilder/scriptbuilder.cpp
-        external/angelscript/add_on/scriptstdstring/scriptstdstring.cpp
-        external/angelscript/add_on/scriptstdstring/scriptstdstring_utils.cpp
+            include/vector_ops.h
+            include/utilities.h
+            include/dataset.h
+            include/loader.h
+            include/indicators.h
+            include/evaluator.h
+            include/backtester.h
+            include/returns.h
 
-        tests/testing.cpp
-        tests/test_loader.cpp
-        tests/test_backtester.cpp)
+            include/filesystem.h
+            source/filesystem.cpp
+            source/loader.cpp
+            source/indicators.cpp
+            source/evaluator.cpp
+            source/backtester.cpp
+            source/returns.cpp
 
-target_link_libraries(TradingStrategyBacktester ${ANGELSCRIPT_LIBRARY_NAME})
+            external/angelscript/add_on/scriptarray/scriptarray.cpp
+            external/angelscript/add_on/scriptbuilder/scriptbuilder.cpp
+            external/angelscript/add_on/scriptstdstring/scriptstdstring.cpp
+            external/angelscript/add_on/scriptstdstring/scriptstdstring_utils.cpp
+
+            tests/testing.cpp
+            tests/test_loader.cpp
+            tests/test_backtester.cpp)
+
+    target_link_libraries(TradingStrategyBacktester PRIVATE ${ANGELSCRIPT_LIBRARY_NAME})
+
+elseif(BUILD_TYPE MATCHES Python)
+
+    message("Compiling Python bindings" )
+    add_subdirectory(external/pybind11)
+
+    pybind11_add_module(TradingStrategyBacktester
+
+            include/vector_ops.h
+            include/utilities.h
+            include/dataset.h
+            include/loader.h
+            include/indicators.h
+            include/evaluator.h
+            include/backtester.h
+            include/returns.h
+
+            include/filesystem.h
+            source/filesystem.cpp
+            source/loader.cpp
+            source/indicators.cpp
+            source/evaluator.cpp
+            source/backtester.cpp
+            source/returns.cpp
+
+            external/angelscript/add_on/scriptarray/scriptarray.cpp
+            external/angelscript/add_on/scriptbuilder/scriptbuilder.cpp
+            external/angelscript/add_on/scriptstdstring/scriptstdstring.cpp
+            external/angelscript/add_on/scriptstdstring/scriptstdstring_utils.cpp
+
+            python/bindings.cpp
+            )
+
+    target_link_libraries(TradingStrategyBacktester PRIVATE ${ANGELSCRIPT_LIBRARY_NAME})
+
+endif()
 
 # Use the headers in the build-tree or the installed ones
 target_include_directories(TradingStrategyBacktester PUBLIC
