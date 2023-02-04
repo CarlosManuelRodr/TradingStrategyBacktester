@@ -56,6 +56,9 @@ elseif(BUILD_TYPE MATCHES Python)
     message("Compiling Python bindings" )
     add_subdirectory(external/pybind11)
 
+    find_package(PythonInterp 3)
+    find_package(PythonLibs   3)
+
     pybind11_add_module(TradingStrategyBacktester
 
             include/vector_ops.h
@@ -84,6 +87,12 @@ elseif(BUILD_TYPE MATCHES Python)
             )
 
     target_link_libraries(TradingStrategyBacktester PRIVATE ${ANGELSCRIPT_LIBRARY_NAME})
+
+    add_custom_command(TARGET TradingStrategyBacktester POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy
+            "$<TARGET_FILE:TradingStrategyBacktester>"
+            "${CMAKE_CURRENT_SOURCE_DIR}/python/$<TARGET_FILE_NAME:TradingStrategyBacktester>"
+            COMMENT "Copying to output directory")
 
 endif()
 
