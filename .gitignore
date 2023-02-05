@@ -6,6 +6,7 @@
 *.lo
 *.o
 *.obj
+*.pyc
 
 # Unix executable
 *.a
@@ -36,6 +37,7 @@
 *.out
 *.app
 /Build
+**/dist/
 
 # User-specific files
 *.pdb
@@ -53,6 +55,7 @@
 **/cmake-build-debug/
 **/cmake-build-release/
 **/cmake-build-python/
+**/TradingStrategyBacktester.egg-info/
 
 # Kernel dump
 *.mx

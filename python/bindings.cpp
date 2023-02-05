@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "../include/loader.h"
 #include "../include/backtester.h"
 namespace py = pybind11;
@@ -8,8 +9,36 @@ using namespace std;
 //*         Bindings          *
 //****************************/
 
-PYBIND11_MODULE(example, m) {
+PYBIND11_MODULE(TradingStrategyBacktester, m) {
     m.doc() = "TradingStrategyBacktester Python bindings."; // optional module docstring
+
+    py::class_<OCHLVData>(m, "OCHLVData")
+            .def(py::init<>())
+            .def(py::init<const std::string&, double, double, double, double, double>(),
+                 py::arg("date"), py::arg("open"), py::arg("close"), py::arg("high"),
+                 py::arg("low"), py::arg("volume"))
+
+            .def(py::init<std::vector<std::string>>(),
+                 py::arg("csvLine"))
+
+            .def_readwrite("date", &OCHLVData::date)
+            .def_readwrite("open", &OCHLVData::open)
+            .def_readwrite("close", &OCHLVData::close)
+            .def_readwrite("high", &OCHLVData::high)
+            .def_readwrite("low", &OCHLVData::low)
+            .def_readwrite("volume", &OCHLVData::volume)
+            ;
+
+    py::class_<StockData>(m, "StockData")
+            .def(py::init<>())
+
+            .def(py::init<const std::vector<std::string>&, const Indicators&, const QuantileIndicators&>(),
+                 py::arg("dates"), py::arg("indicators"), py::arg("quantileIndicators"))
+
+            .def_readwrite("dates", &StockData::dates)
+            .def_readwrite("indicators", &StockData::indicators)
+            .def_readwrite("quantileIndicators", &StockData::quantileIndicators)
+            ;
 
     py::class_<Loader>(m, "Loader")
             .def_static("LoadRawData",

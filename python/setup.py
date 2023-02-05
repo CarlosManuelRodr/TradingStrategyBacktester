@@ -8,9 +8,7 @@ if sys.version_info < (3, 0):
 setup(
     name='TradingStrategyBacktester',
     version='0.1',
-    packages=['TradingStrategyBacktester'],
     package_dir={
-        '': '${CMAKE_CURRENT_BINARY_DIR}'
     },
     package_data={
         '': ['TradingStrategyBacktester.cpython-310-x86_64-linux-gnu.so']

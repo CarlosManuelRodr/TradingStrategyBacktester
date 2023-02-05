@@ -17,7 +17,10 @@
 struct OCHLVData
 {
     std::string date;
-    double open, close, high, low, volume;
+    double open{}, close{}, high{}, low{}, volume{};
+
+    /** Default constructor. */
+    OCHLVData() = default;
 
     /** Explicit constructor. */
     OCHLVData(const std::string& date, double open, double close, double high, double low, double volume)
@@ -69,6 +72,17 @@ struct StockData
     std::vector<std::string> dates;
     Indicators indicators;
     QuantileIndicators quantileIndicators;
+
+    /** Default constructor. */
+    StockData() = default;
+
+    /** Explicit constructor. */
+    StockData(const std::vector<std::string>& dates, const Indicators& indicators, const QuantileIndicators& quantileIndicators)
+    {
+        this->dates = dates;
+        this->indicators = indicators;
+        this->quantileIndicators = quantileIndicators;
+    }
 
     /** Serialization hook. */
     template <class Archive> void serialize(Archive& ar)
