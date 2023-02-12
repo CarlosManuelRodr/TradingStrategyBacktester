@@ -77,11 +77,23 @@ struct StockData
     StockData() = default;
 
     /** Explicit constructor. */
-    StockData(const std::vector<std::string>& dates, const Indicators& indicators, const QuantileIndicators& quantileIndicators)
+    StockData(const std::vector<std::string>& dates, const Indicators& indicators,
+              const QuantileIndicators& quantileIndicators)
     {
         this->dates = dates;
         this->indicators = indicators;
         this->quantileIndicators = quantileIndicators;
+    }
+
+    /**
+     * Equality operator.
+     * @param other The object to be compared.
+     * @return Are object contents equal?
+     */
+    bool operator==(const StockData& other) const
+    {
+        return (dates == other.dates) && (indicators == other.indicators)
+                && (quantileIndicators == other.quantileIndicators);
     }
 
     /** Serialization hook. */
@@ -91,5 +103,5 @@ struct StockData
     }
 };
 
-/** Dataset is an alias to an unordered_map that maps the name of a stock to its StockData. */
+/** Dataset is an alias to a map that maps the name of a stock to its StockData. */
 using Dataset = std::map<std::string, StockData>;

@@ -11,30 +11,24 @@ public:
 
     /**
      * Check if the directory in path exists in the filesystem.
-     * @param path
-     * @return
+     * @param path The path.
+     * @return The result.
      */
     static bool DirectoryExist(const std::string& path);
 
     /**
      * Get the name of the last directory in path.
-     * @param path
-     * @return
+     * @param path The path.
+     * @return The name of the directory.
      */
     static std::string DirectoryName(const std::string& path);
 
     /**
      * Check if the file in path exists in the filesystem.
-     * @param fileName
-     * @return
+     * @param path The path.
+     * @return The result.
      */
-    static bool FileExist(const std::string& fileName);
-
-    /**
-     * Gets the directory of the this binary.
-     * @return
-     */
-    static std::string GetAppDirectory();
+    static bool FileExist(const std::string& path);
 
     /**
      * Creates a new directory.
@@ -50,25 +44,25 @@ public:
     static std::string FilenameJoin(const std::initializer_list<std::string>& path);
 
     /**
+     * Deletes a file or a directory.
+     * @param path The path.
+     * @return The number of deleted elements.
+     */
+    static std::uintmax_t Delete(const std::string& path);
+
+    /**
      * Get the base name of a file.
-     * @param path
-     * @return
+     * @param path The path.
+     * @return The base name.
      */
     static std::string FileBasename(const std::string& path);
 
     /**
      * Get the directory name of a file.
-     * @param path
-     * @return
+     * @param path The path.
+     * @return The directory name.
      */
     static std::string FileDirectory(const std::string& path);
-
-    /**
-     * Get the extension of a file.
-     * @param filepath
-     * @return
-     */
-    static std::string FileExtension(const std::string& filepath);
 
     /**
      * Fetch all the files in path.

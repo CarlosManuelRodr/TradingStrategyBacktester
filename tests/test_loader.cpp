@@ -29,3 +29,19 @@ TEST_CASE("Test dataset loading")
     CHECK((dataset.at("AAPL").indicators.at("TradingVolume").at(0) == 789905200.0));
     CHECK((dataset.at("AAPL").dates.at(0) == "\"2008-05-27\""));
 }
+
+TEST_CASE("Test serialization integrity")
+{
+    string cachePath = FileSystem::FilenameJoin({ "../dataset", Loader::cacheDirectoryName });
+    Loader::ClearCache("../dataset");
+    CHECK((FileSystem::DirectoryExist(cachePath) == false));
+
+    // Load dataset and cache it.
+    Dataset dataset1 = Loader::LoadDataset("../dataset");
+    CHECK((FileSystem::DirectoryExist(cachePath) == true));
+
+    // Load cached dataset.
+    Dataset dataset2 = Loader::LoadDataset("../dataset");
+
+    CHECK((dataset1 == dataset2));
+}

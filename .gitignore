@@ -52,9 +52,11 @@
 **/AS_DEBUG/
 **/.idea/
 **/Mathlink/
+**/Cache/
 **/cmake-build-debug/
 **/cmake-build-release/
 **/cmake-build-python/
+**/cmake-build-pythondebug/
 **/TradingStrategyBacktester.egg-info/
 
 # Kernel dump

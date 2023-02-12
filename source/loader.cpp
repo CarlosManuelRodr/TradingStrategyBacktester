@@ -10,9 +10,6 @@
 #include "utilities.h"
 using namespace std;
 
-/****************************
-*      Dataset loading      *
-****************************/
 
 vector<OCHLVData> Loader::LoadRawData(const string& path)
 {
@@ -64,28 +61,21 @@ using ChecksumTable = map<string, string>;
 string calculate_file_checksum(const string& path)
 {
     ifstream file(path, ios_base::in | ios_base::binary);
-    if (file.is_open())
-        return digestpp::sha256().absorb(file).hexdigest();
-    else
-        return "File not found";
+    return file.is_open() ? digestpp::sha256().absorb(file).hexdigest() : "File not found";
 }
 
 StockData Loader::LoadStockdata(const string& path)
 {
     StockData loadedStockData;
+    const string datasetDirectory = FileSystem::FileDirectory(path);
 
     // Check if the serialized data directory exists.
-    string serializedDataDir = FileSystem::FilenameJoin({ FileSystem::GetAppDirectory(), "StockData" });
+    string serializedDataDir = FileSystem::FilenameJoin({ datasetDirectory, cacheDirectoryName });
     if (!FileSystem::DirectoryExist(serializedDataDir))
         FileSystem::CreateDirectory(serializedDataDir);
 
-    string datasetDirectoryName = FileSystem::DirectoryName(FileSystem::FileDirectory(path));
-    string serializedDatasetDirectory = FileSystem::FilenameJoin({ FileSystem::GetAppDirectory(), "StockData", datasetDirectoryName });
-    if (!FileSystem::DirectoryExist(serializedDatasetDirectory))
-        FileSystem::CreateDirectory(serializedDatasetDirectory);
-
     // Look-up for the checksum table.
-    string checksumTablePath = FileSystem::FilenameJoin({ FileSystem::GetAppDirectory(), "StockData", datasetDirectoryName, "ChecksumTable.json" });
+    string checksumTablePath = FileSystem::FilenameJoin({ serializedDataDir, "ChecksumTable.json" });
     if (FileSystem::FileExist(checksumTablePath))
     {
         // If it exists, deserialize it.
@@ -99,8 +89,7 @@ StockData Loader::LoadStockdata(const string& path)
         if (checksumTable[path] == calculate_file_checksum(path))
         {
             // Deserialize dataset and return it.
-            string serializedFilePath = FileSystem::FilenameJoin({ FileSystem::GetAppDirectory(), "StockData",
-                                                                        datasetDirectoryName, FileSystem::FileBasename(path) + ".bin" });
+            string serializedFilePath = FileSystem::FilenameJoin({ serializedDataDir, FileSystem::FileBasename(path) + ".bin" });
             if (FileSystem::FileExist(serializedFilePath))
             {
                 ifstream istock(serializedFilePath, ios::binary | ios::in);
@@ -115,7 +104,7 @@ StockData Loader::LoadStockdata(const string& path)
                     throw runtime_error("Error opening serialized dataset with path: " + path + ".");
             }
             else
-                throw runtime_error("Cannot open serializedFilePath that is supposed to exist.");
+                throw runtime_error("Cannot open serializedFilePath.");
         }
         else // Parse the new version of the file, serialize it and update the checksum.
         {
@@ -125,13 +114,13 @@ StockData Loader::LoadStockdata(const string& path)
             loadedStockData.dates = VectorOps::Drop(Indicator::IndicatorTimeSeries(Indicator::Date, rawDataset), 2 * windowSize);
 
             // Serialize dataset.
-            ofstream os(FileSystem::FilenameJoin({ FileSystem::GetAppDirectory(), "StockData", datasetDirectoryName, FileSystem::FileBasename(path) + ".bin" }), ios::binary | ios::out);
+            ofstream os(FileSystem::FilenameJoin({ serializedDataDir, FileSystem::FileBasename(path) + ".bin" }), ios::binary | ios::out);
             cereal::BinaryOutputArchive oarchive(os);
             oarchive(loadedStockData);
 
             // Update checksum
             checksumTable[path] = calculate_file_checksum(path);
-            ofstream checksumTableOS(FileSystem::FilenameJoin({ FileSystem::GetAppDirectory(), "StockData", datasetDirectoryName, "ChecksumTable.json" }));
+            ofstream checksumTableOS(FileSystem::FilenameJoin({ serializedDataDir, "ChecksumTable.json" }));
             cereal::JSONOutputArchive oChecksumTableArchive(checksumTableOS);
             oChecksumTableArchive(checksumTable);
 
@@ -146,7 +135,7 @@ StockData Loader::LoadStockdata(const string& path)
         loadedStockData.dates = VectorOps::Drop(Indicator::IndicatorTimeSeries(Indicator::Date, rawDataset), 2 * windowSize);
 
         // Serialize dataset.
-        ofstream os(FileSystem::FilenameJoin({ FileSystem::GetAppDirectory(), "StockData", datasetDirectoryName, FileSystem::FileBasename(path) + ".bin" }), ios::binary | ios::out);
+        ofstream os(FileSystem::FilenameJoin({ serializedDataDir, FileSystem::FileBasename(path) + ".bin" }), ios::binary | ios::out);
         cereal::BinaryOutputArchive oarchive(os);
         oarchive(loadedStockData);
 
@@ -155,7 +144,7 @@ StockData Loader::LoadStockdata(const string& path)
         checksumTable[path] = calculate_file_checksum(path);
 
         // Serialize checksum table.
-        ofstream checksumTableOS(FileSystem::FilenameJoin({ FileSystem::GetAppDirectory(), "StockData", datasetDirectoryName, "ChecksumTable.json" }));
+        ofstream checksumTableOS(FileSystem::FilenameJoin({ serializedDataDir, "ChecksumTable.json" }));
         cereal::JSONOutputArchive oChecksumTableArchive(checksumTableOS);
         oChecksumTableArchive(checksumTable);
 
@@ -173,4 +162,11 @@ Dataset Loader::LoadDataset(const string& path)
         dataset[FileSystem::FileBasename(datasetFiles[i])] = stockDataFromFiles[i];
 
     return dataset;
+}
+
+void Loader::ClearCache(const string& path)
+{
+    string serializedDataDir = FileSystem::FilenameJoin({ path, cacheDirectoryName });
+    if (FileSystem::DirectoryExist(serializedDataDir))
+        FileSystem::Delete(serializedDataDir);
 }

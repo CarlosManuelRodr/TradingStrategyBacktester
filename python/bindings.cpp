@@ -41,6 +41,10 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
             ;
 
     py::class_<Loader>(m, "Loader")
+            .def_readonly_static("cacheDirectoryName",
+                                 &Loader::cacheDirectoryName,
+                                 "Defines the serialized data directory name.")
+
             .def_static("LoadRawData",
                         &Loader::LoadRawData,
                         "Load OCHLVData from csv file.",
@@ -59,6 +63,11 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
             .def_static("LoadDataset",
                         &Loader::LoadDataset,
                         "Load a dataset of csv files located in the path.",
+                        py::arg("path"))
+
+            .def_static("ClearCache",
+                        &Loader::ClearCache,
+                        "Clear the temporary serialized data directory.",
                         py::arg("path"))
             ;
 

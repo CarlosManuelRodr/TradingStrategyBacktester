@@ -47,7 +47,8 @@ if (BUILD_TYPE MATCHES Tests)
 
             tests/testing.cpp
             tests/test_loader.cpp
-            tests/test_backtester.cpp)
+            tests/test_backtester.cpp
+            tests/test_filesystem.cpp)
 
     target_link_libraries(TradingStrategyBacktester PRIVATE ${ANGELSCRIPT_LIBRARY_NAME})
 

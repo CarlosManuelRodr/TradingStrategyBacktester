@@ -6,7 +6,6 @@
 #include "utilities.h"
 
 #if defined(__linux__) || defined(__APPLE__)
-#include <unistd.h>
 #include <ftw.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -29,7 +28,8 @@ using namespace std;
 ****************************/
 
 #if defined(__linux__) || defined(__APPLE__)
-int fs_unlink_cb(const char* fpath, const struct stat* sb, int typeflag, struct FTW* ftwbuf)
+int fs_unlink_cb(const char* fpath, [[maybe_unused]] const struct stat* sb, [[maybe_unused]] int typeflag,
+                 [[maybe_unused]] struct FTW* ftwbuf)
 {
     int rv = remove(fpath);
     if (rv)
@@ -41,7 +41,7 @@ int fs_unlink_cb(const char* fpath, const struct stat* sb, int typeflag, struct 
 * @brief Remove path recursively.
 * @param path Path to delete.
 */
-int fs_rmrf(string path)
+int fs_rmrf(const string& path)
 {
     return nftw(path.c_str(), fs_unlink_cb, 64, FTW_DEPTH | FTW_PHYS);
 }
@@ -59,7 +59,7 @@ int fs_mkpath(std::string s, mode_t mode)
     {
         dir = s.substr(0, pos++);
         pre = pos;
-        if (dir.size() == 0)
+        if (dir.empty())
             continue;
 
         if ((mkDirRet = mkdir(dir.c_str(), mode)) && errno != EEXIST)
@@ -85,7 +85,7 @@ string replace_all(const string& in, const string& search, const string& replace
     return s;
 }
 
-string s_format_path(const string& in, bool support_long_path = false)
+string s_format_path(const string& in, [[maybe_unused]] bool support_long_path = false)
 {
 #if defined(__linux__) || defined(__APPLE__)
     return { in };
@@ -177,50 +177,15 @@ string FileSystem::DirectoryName(const string& path)
     return directories.back();
 }
 
-bool FileSystem::FileExist(const string& fileName)
+bool FileSystem::FileExist(const string& path)
 {
-    ifstream infile(fileName.c_str());
+    ifstream infile(path.c_str());
+
     bool res = infile.is_open();
     if (res)
         infile.close();
+
     return res;
-}
-
-std::string FileSystem::GetAppDirectory()
-{
-#if defined(__linux__)
-    string path;
-    pid_t pid = getpid();
-    char buf[20] = { 0 };
-    sprintf(buf, "%d", pid);
-    string _link = "/proc/";
-    _link.append(buf);
-    _link.append("/exe");
-    char proc[512];
-    int ch = static_cast<int>(readlink(_link.c_str(), proc, 512));
-    if (ch != -1)
-    {
-        proc[ch] = 0;
-        path = proc;
-        std::string::size_type t = path.find_last_of('/');
-        path = path.substr(0, t);
-    }
-    return path;
-#elif defined(_WIN32)
-    wchar_t ownPth[MAX_PATH];
-    char mbOwnPth[MAX_PATH];
-
-    HMODULE hModule = GetModuleHandle(NULL);
-    if (hModule != NULL)
-    {
-        GetModuleFileNameW(hModule, ownPth, MAX_PATH);
-        PathRemoveFileSpec(ownPth);
-        wcstombs(mbOwnPth, ownPth, MAX_PATH);
-        return std::string(mbOwnPth);
-    }
-    else
-        return std::string("");
-#endif
 }
 
 void FileSystem::CreateDirectory(const string& directory_name)
@@ -259,17 +224,19 @@ string FileSystem::FileDirectory(const string& path)
     return path.substr(0, path.find_last_of("/\\"));
 }
 
-string FileSystem::FileExtension(const string& filepath)
-{
-    return filepath.substr(filepath.find_last_of('.') + 1);
-}
-
 vector<string> FileSystem::FilesInDirectory(const string& path)
 {
     vector<string> output;
-    for (const auto& entry : filesystem::directory_iterator(path))
-        output.push_back(entry.path().string());
+    for (const auto &entry: filesystem::directory_iterator(path))
+    {
+        if (filesystem::is_regular_file(entry.path()))
+            output.push_back(entry.path().string());
+    }
 
     sort(output.begin(), output.end(), [](const std::string& a, const std::string& b) {return a < b;});
     return output;
+}
+
+std::uintmax_t FileSystem::Delete(const std::string& path) {
+    return filesystem::remove_all(path);
 }
