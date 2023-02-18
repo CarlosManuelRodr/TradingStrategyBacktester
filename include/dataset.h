@@ -96,6 +96,17 @@ struct StockData
                 && (quantileIndicators == other.quantileIndicators);
     }
 
+    /**
+     * Inequality operator.
+     * @param other The object to be compared.
+     * @return Are object contents unequal?
+     */
+    bool operator!=(const StockData& other) const
+    {
+        return (dates != other.dates) || (indicators != other.indicators)
+               || (quantileIndicators != other.quantileIndicators);
+    }
+
     /** Serialization hook. */
     template <class Archive> void serialize(Archive& ar)
     {

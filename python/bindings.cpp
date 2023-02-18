@@ -1,5 +1,8 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "Simplify"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/operators.h>
 #include "../include/loader.h"
 #include "../include/backtester.h"
 namespace py = pybind11;
@@ -34,6 +37,9 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
 
             .def(py::init<const std::vector<std::string>&, const Indicators&, const QuantileIndicators&>(),
                  py::arg("dates"), py::arg("indicators"), py::arg("quantileIndicators"))
+
+            .def(py::self == py::self)
+            .def(py::self != py::self)
 
             .def_readwrite("dates", &StockData::dates)
             .def_readwrite("indicators", &StockData::indicators)
@@ -145,3 +151,4 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
                         py::arg("strategySignals"), py::arg("stock"), py::arg("minibatchSize"))
             ;
 }
+#pragma clang diagnostic pop

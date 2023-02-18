@@ -8,8 +8,7 @@ if sys.version_info < (3, 0):
 setup(
     name='TradingStrategyBacktester',
     version='0.1',
-    package_dir={
-    },
+    package_dir={},
     package_data={
         '': ['TradingStrategyBacktester.cpython-310-x86_64-linux-gnu.so']
     }
