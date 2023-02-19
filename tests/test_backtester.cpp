@@ -71,7 +71,7 @@ TEST_CASE("Test parallel backtester")
 
         double ret = VectorOps::Total(Returns::SimpleReturns(executionData, 0.05));
         returns.push_back(ret);
-        cout << "Stock: " << key << ", Returns: " << ret;
+        cout << "Stock: " << key << ", Returns: " << ret << endl;
     }
 
     double totalRet = VectorOps::Total(returns);
