@@ -39,7 +39,6 @@ class TestLoader(unittest.TestCase):
 
         # Load cached dataset.
         dataset2: dict[str, StockData] = Loader.LoadDataset(dataset_path)
-
         self.assertEqual(dataset1, dataset2)
 
 

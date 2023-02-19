@@ -23,6 +23,7 @@ if (BUILD_TYPE MATCHES Tests)
 
     add_executable(TradingStrategyBacktester
 
+            include/thread_pool.h
             include/vector_ops.h
             include/utilities.h
             include/dataset.h
@@ -62,6 +63,7 @@ elseif(BUILD_TYPE MATCHES Python)
 
     pybind11_add_module(TradingStrategyBacktester
 
+            include/thread_pool.h
             include/vector_ops.h
             include/utilities.h
             include/dataset.h

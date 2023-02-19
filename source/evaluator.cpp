@@ -1,26 +1,28 @@
 #include <cassert>
+#include <utility>
 #include "evaluator.h"
+#include "thread_pool.h"
 using namespace std;
 
 /****************************
 *     Dataset reference     *
 ****************************/
 
-Dataset* strategyRunnerDataset = nullptr;
+Dataset Evaluator::evaluatorDataset;
 
-void Evaluator::SetStrategyEvaluatorDataset(Dataset& dataset) noexcept
+void Evaluator::SetStrategyEvaluatorDataset(Dataset dataset) noexcept
 {
-    strategyRunnerDataset = &dataset;
+    evaluatorDataset = std::move(dataset);
 }
 
-Dataset* Evaluator::GetStrategyEvaluatorDataset() noexcept
+Dataset Evaluator::GetStrategyEvaluatorDataset() noexcept
 {
-    return strategyRunnerDataset;
+    return evaluatorDataset;
 }
 
 vector<string> Evaluator::GetStocksInDataset() noexcept
 {
-    return Utilities::Keys(*strategyRunnerDataset);
+    return Utilities::Keys(evaluatorDataset);
 }
 
 /**************************************
@@ -29,39 +31,39 @@ vector<string> Evaluator::GetStocksInDataset() noexcept
 
 string Evaluator::Date(const string& stock, size_t time)
 {
-    return (*strategyRunnerDataset)[stock].dates[time];
+    return evaluatorDataset[stock].dates[time];
 }
 
 vector<string> Evaluator::Dates(const string& stock)
 {
-    return (*strategyRunnerDataset)[stock].dates;
+    return evaluatorDataset[stock].dates;
 }
 
 double Evaluator::Indicator(const string& indicatorName, const string& stock, size_t time)
 {
-    return (*strategyRunnerDataset)[stock].indicators[indicatorName][time];
+    return evaluatorDataset[stock].indicators[indicatorName][time];
 }
 
 double Evaluator::IndQuantile(const string& indicatorName, const string& percentile, const string& stock, size_t time)
 {
-    return (*strategyRunnerDataset)[stock].quantileIndicators[percentile][indicatorName][time];
+    return evaluatorDataset[stock].quantileIndicators[percentile][indicatorName][time];
 }
 
 vector<double>& Evaluator::IndicatorTimeSeries(const string& indicatorName, const string& stock)
 {
-    return (*strategyRunnerDataset)[stock].indicators[indicatorName];
+    return evaluatorDataset[stock].indicators[indicatorName];
 }
 
 vector<double>& Evaluator::IndQuantileTimeSeries(const string& indicatorName, const string& percentile, const string& stock)
 {
-    return (*strategyRunnerDataset)[stock].quantileIndicators[percentile][indicatorName];
+    return evaluatorDataset[stock].quantileIndicators[percentile][indicatorName];
 }
 
 /****************************
 *     Angescript engine     *
 ****************************/
 
-const string program_part_A = R""""(bool strategy_result(string stock, int time)
+const string program_part_A = R""""(bool execute(string stock, int time)
 {
     if ()"""";
 
@@ -149,6 +151,7 @@ asIScriptEngine* Evaluator::startAngelscriptEngine()
     registerInterface(engine);
     engine->SetEngineProperty(asEP_AUTO_GARBAGE_COLLECT, false);
     engine->SetEngineProperty(asEP_BUILD_WITHOUT_LINE_CUES, true);
+
     return engine;
 }
 
@@ -194,13 +197,13 @@ asIScriptFunction* Evaluator::compileAngelscriptStrategy(asIScriptEngine* engine
         scriptingEngineLog("Error getting StrategyModule.");
         return nullptr;
     }
-    asIScriptFunction* func = mod->GetFunctionByDecl("bool strategy_result(string, int)");
+    asIScriptFunction* func = mod->GetFunctionByDecl("bool execute(string, int)");
     if (func == nullptr)
     {
         // The function couldn't be found. Instruct the script writer
         // to include the expected function in the script.
         scriptingEngineLog(
-                "The script must have the function 'bool strategy_result(string, int)'. Please add it and try again.");
+                "The script must have the function 'bool execute(string, int)'. Please add it and try again.");
         return nullptr;
     }
 
@@ -237,9 +240,7 @@ bool Evaluator::executeAngelscriptStrategy(asIScriptEngine* engine, asIScriptFun
 }
 
 /**********************************
-*                                 *
 *  Strategy function evaluation   *
-*                                 *
 **********************************/
 
 vector<bool> Evaluator::RunStrategy(const string& strategyProgram, const string& stock)
@@ -263,6 +264,32 @@ vector<bool> Evaluator::RunStrategy(const string& strategyProgram, const string&
     return strategyResults;
 }
 
+std::map<std::string, std::vector<bool>> Evaluator::RunStrategyAllStocks(const string &strategyProgram)
+{
+    // Create thread pool.
+    vector<string> stocks = GetStocksInDataset();
+    BS::thread_pool pool;
+    vector<future<vector<bool>>> results;
+
+    asPrepareMultithread();
+
+    // Push tasks to thread pool and wait for them to finish.
+    for (const auto& stock : stocks)
+        results.push_back(pool.submit(Evaluator::RunStrategy, strategyProgram, stock));
+
+    pool.wait_for_tasks();
+
+    // Return the results of the completed tasks.
+    map<string, vector<bool>> output;
+    for (size_t i = 0; i < stocks.size(); i++)
+        output[stocks[i]] = results[i].get();
+
+    asUnprepareMultithread();
+
+    return output;
+}
+
+
 /****************************
 *          Testing          *
 ****************************/
@@ -274,9 +301,7 @@ string Evaluator::ValidateStrategyProgram(const string& strategyProgram)
     // Create the script engine
     asIScriptEngine* engine = asCreateScriptEngine();
     if (engine == nullptr)
-    {
         return "Couldn't start scripting engine.";
-    }
 
     // Set the message callback to receive information on errors in human-readable form.
     int r = engine->SetMessageCallback(asFUNCTION(messageCallback), nullptr, asCALL_CDECL);
@@ -316,10 +341,10 @@ string Evaluator::ValidateStrategyProgram(const string& strategyProgram)
         string log = "Error getting StrategyModule.";
         return log + scriptingEngineProgram(strategyFunction);
     }
-    const asIScriptFunction* func = mod->GetFunctionByDecl("bool strategy_result(string, int)");
+    const asIScriptFunction* func = mod->GetFunctionByDecl("bool execute(string, int)");
     if (func == nullptr)
     {
-        string log = scriptingEngineLogStr("The script must have the function 'bool strategy_result(string, int)'.");
+        string log = scriptingEngineLogStr("The script must have the function 'bool execute(string, int)'.");
         return log + scriptingEngineProgram(strategyFunction);
     }
 

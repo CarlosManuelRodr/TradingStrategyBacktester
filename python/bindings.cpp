@@ -78,6 +78,7 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
             ;
 
     py::class_<Evaluator>(m, "Evaluator")
+
             .def_static("SetStrategyEvaluatorDataset",
                         &Evaluator::SetStrategyEvaluatorDataset,
                         "Configure the dataset to be used by the strategy runner.",
@@ -99,7 +100,12 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
             .def_static("RunStrategy",
                         &Evaluator::RunStrategy,
                         "Runs the strategy program in each date available of the stock.",
-                        py::arg("strategyProgram"),py::arg("stock"))
+                        py::arg("strategyProgram"), py::arg("stock"))
+
+            .def_static("RunStrategyAllStocks",
+                        &Evaluator::RunStrategyAllStocks,
+                        "Runs the strategy program for all loaded stocks.",
+                        py::arg("strategyProgram"))
 
             .def_static("Date",
                         &Evaluator::Date,
@@ -130,6 +136,38 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
                         &Evaluator::IndQuantileTimeSeries,
                         "IndQuantileTimeSeries accessor.",
                         py::arg("indicatorName"), py::arg("percentile"), py::arg("stock"))
+            ;
+
+    py::enum_<StrategySignal>(m, "StrategySignal")
+            .value("Buy", StrategySignal::Buy)
+            .value("Sell", StrategySignal::Sell)
+            ;
+
+    py::class_<ExecutionData>(m, "ExecutionData")
+            .def_readwrite("signalType", &ExecutionData::signalType, "The type of signal.")
+            .def_readwrite("time", &ExecutionData::time, "The time when the signal is executed.")
+            .def_readwrite("timeIndex", &ExecutionData::timeIndex, "The index of the time when the signal is executed.")
+            .def_readwrite("price", &ExecutionData::price, "The price at which the transaction is executed.")
+            ;
+
+    py::class_<Returns>(m, "Returns")
+            .def_static("SimpleReturns",
+                        &Returns::SimpleReturns,
+                        "Calculate a list of simple returns from the results of backtesting.",
+                        py::arg("executionData"),
+                        py::arg("transactionCost"))
+
+            .def_static("LogReturns",
+                        &Returns::LogReturns,
+                        "Calculate a list of logarithmic returns from the results of backtesting.",
+                        py::arg("executionData"),
+                        py::arg("transactionCost"))
+
+            .def_static("DivReturns",
+                        &Returns::DivReturns,
+                        "Calculate a list of percentage returns from the results of backtesting.",
+                        py::arg("executionData"),
+                        py::arg("transactionCost"))
             ;
 
     py::class_<Backtester>(m, "Backtester")

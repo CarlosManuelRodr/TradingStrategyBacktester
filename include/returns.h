@@ -13,9 +13,16 @@ enum class StrategySignal
 /** Contains information about the execution of an order. */
 struct ExecutionData
 {
+    /** The type of signal. */
     StrategySignal signalType;
+
+    /** The time when the signal is executed. */
     std::string time;
+
+    /** The index of the time when the signal is executed. */
     unsigned timeIndex;
+
+    /** The price at which the transaction is executed. */
     double price;
 };
 
