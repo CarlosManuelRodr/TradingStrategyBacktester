@@ -30,7 +30,7 @@ vector<string> Evaluator::GetStocksInDataset() noexcept
 * Observable accessors implementation *
 **************************************/
 
-string Evaluator::Date(const string& stock, size_t time)
+string Evaluator::Date(const string& stock, int time)
 {
     return evaluatorDataset[stock].dates[time];
 }
@@ -40,12 +40,12 @@ vector<string> Evaluator::Dates(const string& stock)
     return evaluatorDataset[stock].dates;
 }
 
-double Evaluator::Indicator(const string& indicatorName, const string& stock, size_t time)
+double Evaluator::Indicator(const string& indicatorName, const string& stock, int time)
 {
     return evaluatorDataset[stock].indicators[indicatorName][time];
 }
 
-double Evaluator::IndQuantile(const string& indicatorName, const string& percentile, const string& stock, size_t time)
+double Evaluator::IndQuantile(const string& indicatorName, const string& percentile, const string& stock, int time)
 {
     return evaluatorDataset[stock].quantileIndicators[percentile][indicatorName][time];
 }
@@ -121,11 +121,11 @@ void Evaluator::registerInterface(asIScriptEngine* engine)
 {
     int r;
     r = engine->RegisterGlobalFunction("double Indicator(string, string, int)",
-                                       asFUNCTIONPR(Evaluator::Indicator, (const string&, const string&, size_t), double),
+                                       asFUNCTIONPR(Evaluator::Indicator, (const string&, const string&, int), double),
                                        asCALL_CDECL);
     assert(r >= 0);
     r = engine->RegisterGlobalFunction("double IndQuantile(string, string, string, int)",
-                                       asFUNCTIONPR(Evaluator::IndQuantile, (const string&, const string&, const string&, size_t), double),
+                                       asFUNCTIONPR(Evaluator::IndQuantile, (const string&, const string&, const string&, int), double),
                                        asCALL_CDECL);
     assert(r >= 0);
 }
@@ -295,21 +295,21 @@ std::map<std::string, std::vector<bool>> Evaluator::RunStrategyAllStocks(const s
 *          Testing          *
 ****************************/
 
-string Evaluator::ValidateStrategyProgram(const string& strategyProgram)
+std::pair<bool, std::string> Evaluator::ValidateStrategyProgram(const string& strategyProgram)
 {
     string strategyFunction = strategyToFunction(strategyProgram);
 
     // Create the script engine
     asIScriptEngine* engine = asCreateScriptEngine();
     if (engine == nullptr)
-        return "Couldn't start scripting engine.";
+        return std::make_pair(false, "Couldn't start scripting engine.");
 
     // Set the message callback to receive information on errors in human-readable form.
     int r = engine->SetMessageCallback(asFUNCTION(messageCallback), nullptr, asCALL_CDECL);
     if (r < 0)
     {
         string log = scriptingEngineLogStr("Unrecoverable error while starting the engine.");
-        return log + scriptingEngineProgram(strategyFunction);
+        return std::make_pair(false, log + scriptingEngineProgram(strategyFunction));
     }
 
     RegisterStdString(engine);
@@ -320,19 +320,19 @@ string Evaluator::ValidateStrategyProgram(const string& strategyProgram)
     if (r < 0)
     {
         string log = scriptingEngineLogStr("Unrecoverable error while starting a new module.");
-        return log + scriptingEngineProgram(strategyFunction);
+        return std::make_pair(false, log + scriptingEngineProgram(strategyFunction));
     }
     r = builder.AddSectionFromMemory("StrategyFunction", strategyFunction.c_str(), (unsigned)strategyFunction.size());
     if (r < 0)
     {
         string log = scriptingEngineLogStr("Please correct the errors in the script and try again.");
-        return log + scriptingEngineProgram(strategyFunction);
+        return std::make_pair(false, log + scriptingEngineProgram(strategyFunction));
     }
     r = builder.BuildModule();
     if (r < 0)
     {
         string log = scriptingEngineLogStr("Please correct the errors in the script and try again.");
-        return log + scriptingEngineProgram(strategyFunction);
+        return std::make_pair(false, log + scriptingEngineProgram(strategyFunction));
     }
 
     // Find the function that is to be called.
@@ -340,14 +340,14 @@ string Evaluator::ValidateStrategyProgram(const string& strategyProgram)
     if (mod == nullptr)
     {
         string log = "Error getting StrategyModule.";
-        return log + scriptingEngineProgram(strategyFunction);
+        return std::make_pair(false, log + scriptingEngineProgram(strategyFunction));
     }
     const asIScriptFunction* func = mod->GetFunctionByDecl("bool execute(string, int)");
     if (func == nullptr)
     {
         string log = scriptingEngineLogStr("The script must have the function 'bool execute(string, int)'.");
-        return log + scriptingEngineProgram(strategyFunction);
+        return std::make_pair(false, log + scriptingEngineProgram(strategyFunction));
     }
 
-    return {"The strategy program is OK." };
+    return std::make_pair(true, "The strategy program is valid.");
 }

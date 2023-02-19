@@ -21,6 +21,24 @@ class TestBacktester(unittest.TestCase):
         Evaluator.SetStrategyEvaluatorDataset(dataset)
 
         strategy_program: str = 'Indicator("EMA", stock, time) < Indicator("ClosePrice", stock, time)'
+        self.assertTrue(Evaluator.ValidateStrategyProgram(strategy_program))
+
+        strategy_results: list[bool] = Evaluator.RunStrategy(strategy_program, "AAPL")
+
+        execution_data: list[ExecutionData] = Backtester.BacktestStoplossProfittake(strategy_results, "AAPL",
+                                                                                    0.05, 0.05, 0.05, -1)
+        returns: list[float] = Returns.SimpleReturns(execution_data, 0.05)
+
+        self.assertGreater(abs(sum(returns)), 0)
+
+    def test_backtester_ind_quantile(self):
+        path = os.path.join(os.getcwd(), "..", "..", "dataset")
+        dataset: dict[str, StockData] = Loader.LoadDataset(path)
+        Evaluator.SetStrategyEvaluatorDataset(dataset)
+
+        strategy_program: str = 'Indicator("EMA", stock, time) < IndQuantile("ClosePrice", "0.75",  stock, time)'
+        self.assertTrue(Evaluator.ValidateStrategyProgram(strategy_program))
+
         strategy_results: list[bool] = Evaluator.RunStrategy(strategy_program, "AAPL")
 
         execution_data: list[ExecutionData] = Backtester.BacktestStoplossProfittake(strategy_results, "AAPL",

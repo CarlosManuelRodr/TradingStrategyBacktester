@@ -1,4 +1,5 @@
 #pragma once
+#include <utility>
 #include <angelscript.h>
 #include <scriptbuilder.h>
 #include <scriptstdstring.h>
@@ -49,7 +50,7 @@ namespace backtester
          * @param strategyProgram Program as string.
          * @return The result of the validation.
          */
-        static std::string ValidateStrategyProgram(const std::string& strategyProgram);
+        static std::pair<bool, std::string> ValidateStrategyProgram(const std::string& strategyProgram);
 
         /**
          * Runs the strategy program in each date available of the stock.
@@ -76,7 +77,7 @@ namespace backtester
          * @param time The time index.
          * @return The date.
          */
-        static std::string Date(const std::string& stock, size_t time);
+        static std::string Date(const std::string& stock, int time);
 
         /**
          * Get a list of dates for a stock.
@@ -92,7 +93,7 @@ namespace backtester
          * @param time The time index.
          * @return The indicator value.
          */
-        static double Indicator(const std::string& indicatorName, const std::string& stock, size_t time);
+        static double Indicator(const std::string& indicatorName, const std::string& stock, int time);
 
         /**
          * Get the value of a quantile of an indicator for a stock at a time index.
@@ -102,8 +103,7 @@ namespace backtester
          * @param time The time index.
          * @return The indicator quantile value.
          */
-        static double IndQuantile(const std::string& indicatorName, const std::string& percentile,
-                                  const std::string& stock, size_t time);
+        static double IndQuantile(const std::string& indicatorName, const std::string& percentile, const std::string& stock, int time);
 
         /**
          * Get the time series of an indicator for a stock.
@@ -120,8 +120,8 @@ namespace backtester
          * @param stock The stock.
          * @return A time series of the indicator quantile as a list.
          */
-        static std::vector<double>& IndQuantileTimeSeries(const std::string& indicatorName,
-                                                          const std::string& percentile, const std::string& stock);
+        static std::vector<double>& IndQuantileTimeSeries(const std::string& indicatorName, const std::string& percentile,
+                                                          const std::string& stock);
 
     };
 }
