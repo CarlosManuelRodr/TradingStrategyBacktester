@@ -3,6 +3,7 @@
 #include "evaluator.h"
 #include "thread_pool.h"
 using namespace std;
+using namespace backtester;
 
 /****************************
 *     Dataset reference     *

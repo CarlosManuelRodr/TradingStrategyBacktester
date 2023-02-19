@@ -9,7 +9,7 @@
 #include "indicators.h"
 #include "utilities.h"
 using namespace std;
-
+using namespace backtester;
 
 vector<OCHLVData> Loader::LoadRawData(const string& path)
 {

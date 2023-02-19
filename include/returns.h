@@ -1,60 +1,63 @@
 #pragma once
 #include "evaluator.h"
 
-//**********************
-//*     Data types     *
-//*********************/
-
-enum class StrategySignal
+namespace backtester
 {
-    Buy, Sell
-};
+    //**********************
+    //*     Data types     *
+    //*********************/
 
-/** Contains information about the execution of an order. */
-struct ExecutionData
-{
-    /** The type of signal. */
-    StrategySignal signalType;
+    enum class StrategySignal
+    {
+        Buy, Sell
+    };
 
-    /** The time when the signal is executed. */
-    std::string time;
+    /** Contains information about the execution of an order. */
+    struct ExecutionData
+    {
+        /** The type of signal. */
+        StrategySignal signalType;
 
-    /** The index of the time when the signal is executed. */
-    unsigned timeIndex;
+        /** The time when the signal is executed. */
+        std::string time;
 
-    /** The price at which the transaction is executed. */
-    double price;
-};
+        /** The index of the time when the signal is executed. */
+        unsigned timeIndex;
 
-//*****************************
-//*    Returns calculation    *
-//****************************/
+        /** The price at which the transaction is executed. */
+        double price;
+    };
 
-class Returns {
-public:
+    //*****************************
+    //*    Returns calculation    *
+    //****************************/
 
-    /**
-     * Calculate a list of simple returns from the results of backtesting.
-     * @param executionData Results of backtesting the strategy.
-     * @param transactionCost The percentage cost of each transaction.
-     * @return The returns.
-     */
-    static std::vector<double> SimpleReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
+    class Returns {
+    public:
 
-    /**
-     * Calculate a list of logarithmic returns from the results of backtesting.
-     * @param executionData Results of backtesting the strategy.
-     * @param transactionCost The percentage cost of each transaction.
-     * @return The returns.
-     */
-    static std::vector<double> LogReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
+        /**
+         * Calculate a list of simple returns from the results of backtesting.
+         * @param executionData Results of backtesting the strategy.
+         * @param transactionCost The percentage cost of each transaction.
+         * @return The returns.
+         */
+        static std::vector<double> SimpleReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
 
-    /**
-     * Calculate a list of percentage returns from the results of backtesting.
-     * @param executionData Results of backtesting the strategy.
-     * @param transactionCost The percentage cost of each transaction.
-     * @return The returns.
-     */
-    static std::vector<double> DivReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
+        /**
+         * Calculate a list of logarithmic returns from the results of backtesting.
+         * @param executionData Results of backtesting the strategy.
+         * @param transactionCost The percentage cost of each transaction.
+         * @return The returns.
+         */
+        static std::vector<double> LogReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
 
-};
+        /**
+         * Calculate a list of percentage returns from the results of backtesting.
+         * @param executionData Results of backtesting the strategy.
+         * @param transactionCost The percentage cost of each transaction.
+         * @return The returns.
+         */
+        static std::vector<double> DivReturns(const std::vector<ExecutionData>& executionData, double transactionCost);
+
+    };
+}

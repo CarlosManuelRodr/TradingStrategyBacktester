@@ -2,7 +2,7 @@
 #include "../include/loader.h"
 #include "../include/filesystem.h"
 using namespace std;
-
+using namespace backtester;
 
 TEST_CASE("Test raw dataset loading")
 {

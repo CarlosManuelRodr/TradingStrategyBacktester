@@ -1,6 +1,7 @@
 #include <cmath>
 #include "returns.h"
 using namespace std;
+using namespace backtester;
 
 enum class CalculateSimpleReturnsState
 {

@@ -7,6 +7,7 @@
 #include "../include/backtester.h"
 namespace py = pybind11;
 using namespace std;
+using namespace backtester;
 
 //*****************************
 //*         Bindings          *

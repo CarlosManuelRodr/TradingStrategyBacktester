@@ -1,6 +1,7 @@
 #include "indicators.h"
 #include "vector_ops.h"
 using namespace std;
+using namespace backtester;
 
 //*****************************
 //*   Technical indicators    *

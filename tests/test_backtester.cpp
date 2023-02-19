@@ -2,6 +2,7 @@
 #include "../include/loader.h"
 #include "../include/backtester.h"
 using namespace std;
+using namespace backtester;
 
 const string strategyProgram = R"(Indicator("EMA", stock, time) < Indicator("ClosePrice", stock, time))";
 

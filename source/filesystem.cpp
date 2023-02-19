@@ -22,6 +22,7 @@
 #endif
 
 using namespace std;
+using namespace backtester;
 
 /****************************
 *        System calls       *

@@ -1,6 +1,7 @@
 #include <random>
 #include "backtester.h"
 using namespace std;
+using namespace backtester;
 
 //******************************************
 //*     backtest_stop-loss_profit-take     *
