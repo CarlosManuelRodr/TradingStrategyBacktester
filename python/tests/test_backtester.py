@@ -3,6 +3,7 @@ import os
 from TradingStrategyBacktester.TradingStrategyBacktester import *
 
 
+# noinspection PyTypeChecker
 class TestBacktester(unittest.TestCase):
     def test_strategy_results(self):
         path = os.path.join(os.getcwd(), "..", "..", "dataset")
