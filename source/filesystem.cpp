@@ -238,6 +238,12 @@ vector<string> FileSystem::FilesInDirectory(const string& path)
     return output;
 }
 
-std::uintmax_t FileSystem::Delete(const std::string& path) {
+std::uintmax_t FileSystem::Delete(const std::string& path)
+{
     return filesystem::remove_all(path);
+}
+
+std::string FileSystem::FileExtension(const string &filepath)
+{
+    return filepath.substr(filepath.find_last_of('.') + 1);
 }

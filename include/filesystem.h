@@ -60,6 +60,13 @@ namespace backtester
         static std::string FileBasename(const std::string& path);
 
         /**
+         * Get the extension of a file.
+         * @param filepath The file path.
+         * @return The extension.
+         */
+        static std::string FileExtension(const std::string& filepath);
+
+        /**
          * Get the directory name of a file.
          * @param path The path.
          * @return The directory name.

@@ -57,7 +57,10 @@
 **/cmake-build-release/
 **/cmake-build-python/
 **/cmake-build-pythondebug/
+**/cmake-build-mathematicadebug/
+**/cmake-build-mathematica/
 **/TradingStrategyBacktester.egg-info/
+mathlink/mathlinktm.cpp
 
 # Kernel dump
 *.mx

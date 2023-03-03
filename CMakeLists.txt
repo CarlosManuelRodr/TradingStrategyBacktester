@@ -97,6 +97,48 @@ elseif(BUILD_TYPE MATCHES Python)
             "${CMAKE_CURRENT_SOURCE_DIR}/python/TradingStrategyBacktester/$<TARGET_FILE_NAME:TradingStrategyBacktester>"
             COMMENT "Copying to output directory")
 
+elseif(BUILD_TYPE MATCHES Mathematica)
+
+    set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Mathematica" ${CMAKE_MODULE_PATH})
+    find_package(Mathematica COMPONENTS MathLink)
+    if (Mathematica_MathLink_DEFINITIONS)
+        add_definitions(${Mathematica_MathLink_DEFINITIONS})
+    endif()
+    include_directories(${Mathematica_INCLUDE_DIRS})
+
+    Mathematica_MathLink_MPREP_TARGET(mathlink/mathlink.tm OUTPUT mathlink/mathlinktm.cpp)
+
+    add_executable(TradingStrategyBacktester
+
+            include/thread_pool.h
+            include/vector_ops.h
+            include/utilities.h
+            include/dataset.h
+            include/loader.h
+            include/indicators.h
+            include/evaluator.h
+            include/backtester.h
+            include/returns.h
+
+            include/filesystem.h
+            source/filesystem.cpp
+            source/loader.cpp
+            source/indicators.cpp
+            source/evaluator.cpp
+            source/backtester.cpp
+            source/returns.cpp
+
+            external/angelscript/add_on/scriptarray/scriptarray.cpp
+            external/angelscript/add_on/scriptbuilder/scriptbuilder.cpp
+            external/angelscript/add_on/scriptstdstring/scriptstdstring.cpp
+            external/angelscript/add_on/scriptstdstring/scriptstdstring_utils.cpp
+
+            mathlink/mathlinktm.cpp
+            mathlink/mathlink_interface.cpp
+            )
+
+    target_link_libraries(TradingStrategyBacktester PRIVATE ${ANGELSCRIPT_LIBRARY_NAME} ${Mathematica_MathLink_LIBRARIES})
+
 endif()
 
 # Use the headers in the build-tree or the installed ones
