@@ -174,9 +174,7 @@ void get_stock_names_of_dataset()
 }
 
 /****************************
-*                           *
-*     Dataset accessors      *
-*                           *
+*     Dataset accessors     *
 ****************************/
 
 void get_date(char const* stock, int time)
@@ -270,9 +268,7 @@ void get_quantile_indicator_timeseries(char const* indicatorName, char const* pe
 }
 
 /****************************
-*                           *
 *      Backtesting API      *
-*                           *
 ****************************/
 
 void get_strategy_values(char const* strategyFunc, char const* stock)
@@ -298,9 +294,7 @@ void get_strategy_values(char const* strategyFunc, char const* stock)
 }
 
 /*************************************
-*                                    *
 *    get_strategy_execution_data     *
-*                                    *
 *************************************/
 
 /// Returns the date and price where trading signals are executed.
@@ -420,9 +414,7 @@ void get_strategy_execution_data_markettiming(char const* strategyFunc, char con
 }
 
 /*********************
-*                    *
 *    get_returns     *
-*                    *
 *********************/
 
 void get_returns_stoploss_profittake(char const* returnFunctionName, char const* strategyFunc, char const* stock,
@@ -619,15 +611,13 @@ void get_returns_for_all_stocks_markettiming(char const* returnFunctionName, cha
 }
 
 /****************************
-*                           *
 *          Testing          *
-*                           *
 ****************************/
 
-/// <summary>
-/// Try to compile the strategy program and report compilation errors if any.
-/// </summary>
-/// <param name="strategyFunc">Program as string.</param>
+/**
+ * Try to compile the strategy program and report compilation errors if any.
+ * @param strategyFunc The strategy program.
+ */
 void strategy_compilation_info(char const* strategyFunc)
 {
     string strategyFunctionString = strategyFunc;
@@ -645,9 +635,7 @@ void strategy_compilation_info(char const* strategyFunc)
 }
 
 /****************************
-*                           *
 *   Mathlink entry point    *
-*                           *
 ****************************/
 
 #if defined(WINDOWS_MATHLINK)
