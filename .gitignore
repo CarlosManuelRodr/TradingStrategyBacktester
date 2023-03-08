@@ -64,3 +64,6 @@ mathlink/mathlinktm.cpp
 
 # Kernel dump
 *.mx
+
+# Dataset
+SP500ByStock/

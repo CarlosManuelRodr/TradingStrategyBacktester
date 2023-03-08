@@ -20,17 +20,13 @@ using namespace std;
 using namespace backtester;
 
 /****************************
-*                           *
 *    Global definitions     *
-*                           *
 ****************************/
 
 unordered_map<string, Dataset> dataset;
 
 /****************************
-*                           *
 *         Utilities         *
-*                           *
 ****************************/
 
 void MLPutStringList(MLINK mlp, vector<string> stringList)
@@ -73,9 +69,7 @@ auto get_return_function(const char* returnFunctionName)
 }
 
 /****************************
-*                           *
 *    Dataset Management     *
-*                           *
 ****************************/
 
 void load_dataset_from_directory(char const* path, char const* identifier)
