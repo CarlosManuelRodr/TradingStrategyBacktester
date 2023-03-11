@@ -29,19 +29,17 @@ unordered_map<string, Dataset> dataset;
 *         Utilities         *
 ****************************/
 
-void MLPutStringList(MLINK mlp, vector<string> stringList)
+void MLPutStringList(MLINK mlp, const vector<string>& stringList)
 {
     MLPutFunction(mlp, "List", (int)stringList.size());
-    for (string& s : stringList)
-    {
+    for (auto &s: stringList)
         MLPutString(mlp, s.c_str());
-    }
 }
 
 void MLPutNull(MLINK mlp)
 {
-    MLPutSymbol(stdlink, "Null");
-    MLEndPacket(stdlink);
+    MLPutSymbol(mlp, "Null");
+    MLEndPacket(mlp);
 }
 
 bool is_stock_in_dataset(const string& stockName)
@@ -298,6 +296,7 @@ void get_strategy_values(char const* strategyFunc, char const* stock)
 *************************************/
 
 /// Returns the date and price where trading signals are executed.
+[[maybe_unused]]
 void get_strategy_execution_data_stoploss_profittake(char const* strategyFunc, char const* stock, double profitTake, double stopLoss,
                                                      double transactionCost)
 {
@@ -308,7 +307,7 @@ void get_strategy_execution_data_stoploss_profittake(char const* strategyFunc, c
         vector<ExecutionData> sed = Backtester::BacktestStoplossProfittake(signals, stock, profitTake, stopLoss, transactionCost);
 
         MLPutFunction(stdlink, "List", (int)sed.size());
-        for (ExecutionData d : sed)
+        for (const ExecutionData& d : sed)
         {
             MLPutFunction(stdlink, "Association", 4);
 
@@ -322,7 +321,7 @@ void get_strategy_execution_data_stoploss_profittake(char const* strategyFunc, c
 
             MLPutFunction(stdlink, "Rule", 2);
             MLPutString(stdlink, "TimeIndex");
-            MLPutInteger(stdlink, d.timeIndex);
+            MLPutInteger(stdlink, (int) d.timeIndex);
 
             MLPutFunction(stdlink, "Rule", 2);
             MLPutString(stdlink, "Price");
@@ -337,16 +336,17 @@ void get_strategy_execution_data_stoploss_profittake(char const* strategyFunc, c
     }
 }
 
-void get_strategy_execution_data_timestop_hit(char const* strategyFunc, char const* stock, int timePeriod, double transactionCost)
+[[maybe_unused]]
+void get_strategy_execution_data_timestop_hit(char const* strategyFunc, char const* stock, int timePeriod)
 {
     string strategyFunctionString = strategyFunc;
     if (is_stock_in_dataset(stock) && (int)strategyFunctionString.length() > 0)
     {
         vector<bool> signals = Evaluator::RunStrategy(strategyFunc, stock);
-        vector<ExecutionData> sed = Backtester::BacktestTimestopHit(signals, stock, timePeriod, transactionCost);
+        vector<ExecutionData> sed = Backtester::BacktestTimestopHit(signals, stock, timePeriod);
 
         MLPutFunction(stdlink, "List", (int)sed.size());
-        for (ExecutionData d : sed)
+        for (const ExecutionData& d : sed)
         {
             MLPutFunction(stdlink, "Association", 4);
 
@@ -360,7 +360,7 @@ void get_strategy_execution_data_timestop_hit(char const* strategyFunc, char con
 
             MLPutFunction(stdlink, "Rule", 2);
             MLPutString(stdlink, "TimeIndex");
-            MLPutInteger(stdlink, d.timeIndex);
+            MLPutInteger(stdlink, (int) d.timeIndex);
 
             MLPutFunction(stdlink, "Rule", 2);
             MLPutString(stdlink, "Price");
@@ -375,16 +375,17 @@ void get_strategy_execution_data_timestop_hit(char const* strategyFunc, char con
     }
 }
 
-void get_strategy_execution_data_markettiming(char const* strategyFunc, char const* stock, double transactionCost)
+[[maybe_unused]]
+void get_strategy_execution_data_markettiming(char const* strategyFunc, char const* stock)
 {
     string strategyFunctionString = strategyFunc;
     if (is_stock_in_dataset(stock) && (int)strategyFunctionString.length() > 0)
     {
         vector<bool> signals = Evaluator::RunStrategy(strategyFunc, stock);
-        vector<ExecutionData> sed = Backtester::BacktestMarketTiming(signals, stock, transactionCost);
+        vector<ExecutionData> sed = Backtester::BacktestMarketTiming(signals, stock);
 
         MLPutFunction(stdlink, "List", (int)sed.size());
-        for (ExecutionData d : sed)
+        for (const ExecutionData& d : sed)
         {
             MLPutFunction(stdlink, "Association", 4);
 
@@ -398,7 +399,7 @@ void get_strategy_execution_data_markettiming(char const* strategyFunc, char con
 
             MLPutFunction(stdlink, "Rule", 2);
             MLPutString(stdlink, "TimeIndex");
-            MLPutInteger(stdlink, d.timeIndex);
+            MLPutInteger(stdlink, (int) d.timeIndex);
 
             MLPutFunction(stdlink, "Rule", 2);
             MLPutString(stdlink, "Price");
@@ -417,6 +418,7 @@ void get_strategy_execution_data_markettiming(char const* strategyFunc, char con
 *    get_returns     *
 *********************/
 
+[[maybe_unused]]
 void get_returns_stoploss_profittake(char const* returnFunctionName, char const* strategyFunc, char const* stock,
                                      double profitTake, double stopLoss, double transactionCost, int minibatchSize)
 {
@@ -440,6 +442,7 @@ void get_returns_stoploss_profittake(char const* returnFunctionName, char const*
         MLPutNull(stdlink);
 }
 
+[[maybe_unused]]
 void get_returns_timestop_hit(char const* returnFunctionName, char const* strategyFunc, char const* stock,
                               int timePeriod, double transactionCost, int minibatchSize)
 {
@@ -463,6 +466,7 @@ void get_returns_timestop_hit(char const* returnFunctionName, char const* strate
         MLPutNull(stdlink);
 }
 
+[[maybe_unused]]
 void get_returns_markettiming(char const* returnFunctionName, char const* strategyFunc, char const* stock, double transactionCost,
                               int minibatchSize)
 {
@@ -492,6 +496,7 @@ void get_returns_markettiming(char const* returnFunctionName, char const* strate
 *                                  *
 ***********************************/
 
+[[maybe_unused]]
 void get_returns_for_all_stocks_stoploss_profittake(char const* returnFunctionName, char const* strategyFunc, double profitTake,
                                                     double stopLoss, double transactionCost, int minibatchSize)
 {
@@ -533,6 +538,7 @@ void get_returns_for_all_stocks_stoploss_profittake(char const* returnFunctionNa
     }
 }
 
+[[maybe_unused]]
 void get_returns_for_all_stocks_timestop_hit(char const* returnFunctionName, char const* strategyFunc, int timePeriod,
                                              double transactionCost, int minibatchSize)
 {
@@ -573,6 +579,7 @@ void get_returns_for_all_stocks_timestop_hit(char const* returnFunctionName, cha
     }
 }
 
+[[maybe_unused]]
 void get_returns_for_all_stocks_markettiming(char const* returnFunctionName, char const* strategyFunc, double transactionCost, int minibatchSize)
 {
     auto returnFunction = get_return_function(returnFunctionName);
@@ -618,6 +625,7 @@ void get_returns_for_all_stocks_markettiming(char const* returnFunctionName, cha
  * Try to compile the strategy program and report compilation errors if any.
  * @param strategyFunc The strategy program.
  */
+[[maybe_unused]]
 void strategy_compilation_info(char const* strategyFunc)
 {
     string strategyFunctionString = strategyFunc;

@@ -1,7 +1,5 @@
 /****************************
-*                           *
 *    Dataset Management     *
-*                           *
 ****************************/
 
 :Begin:
@@ -45,9 +43,7 @@
 :End:
 
 /****************************
-*                           *
-*     Dataset accesors      *
-*                           *
+*     Dataset accessors     *
 ****************************/
 
 :Begin:
@@ -99,9 +95,7 @@
 :End:
 
 /****************************
-*                           *
 *      Backtesting API      *
-*                           *
 ****************************/
 
 :Begin:
@@ -126,17 +120,17 @@
 
 :Begin:
 :Function:       get_strategy_execution_data_timestop_hit
-:Pattern:        BTGetStrategyExecutionDataTimestopHit[strategy_String, stock_String, timePeriod_Integer, transactionCost_Real]
-:Arguments:      { strategy, stock, timePeriod, transactionCost }
-:ArgumentTypes:  { String, String, Integer, Real }
+:Pattern:        BTGetStrategyExecutionDataTimestopHit[strategy_String, stock_String, timePeriod_Integer]
+:Arguments:      { strategy, stock, timePeriod }
+:ArgumentTypes:  { String, String, Integer }
 :ReturnType:     Manual
 :End:
 
 :Begin:
 :Function:       get_strategy_execution_data_markettiming
-:Pattern:        BTGetStrategyExecutionDataMarketTiming[strategy_String, stock_String, transactionCost_Real]
-:Arguments:      { strategy, stock, transactionCost }
-:ArgumentTypes:  { String, String, Real }
+:Pattern:        BTGetStrategyExecutionDataMarketTiming[strategy_String, stock_String]
+:Arguments:      { strategy, stock }
+:ArgumentTypes:  { String, String }
 :ReturnType:     Manual
 :End:
 
@@ -197,9 +191,7 @@
 :End:
 
 /****************************
-*                           *
 *          Testing          *
-*                           *
 ****************************/
 
 :Begin:

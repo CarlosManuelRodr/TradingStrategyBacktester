@@ -74,13 +74,13 @@ vector<ExecutionData> Backtester::BacktestStoplossProfittake(const vector<bool>&
 
         buy.signalType = StrategySignal::Buy;
         buy.timeIndex = cursor;
-        buy.time = Evaluator::Date(stock, cursor);
-        buy.price = Evaluator::Indicator("ClosePrice", stock, cursor);
+        buy.time = Evaluator::Date(stock, (int) cursor);
+        buy.price = Evaluator::Indicator("ClosePrice", stock, (int) cursor);
 
         sell.signalType = StrategySignal::Sell;
         sell.timeIndex = exitIndex;
-        sell.time = Evaluator::Date(stock, exitIndex);
-        sell.price = Evaluator::Indicator("ClosePrice", stock, exitIndex);
+        sell.time = Evaluator::Date(stock, (int) exitIndex);
+        sell.price = Evaluator::Indicator("ClosePrice", stock, (int) exitIndex);
 
         output.push_back(buy);
         output.push_back(sell);
@@ -137,13 +137,13 @@ vector<ExecutionData> Backtester::BacktestTimestopHit(const vector<bool>& strate
 
             buy.signalType = StrategySignal::Buy;
             buy.timeIndex = cursor;
-            buy.time = Evaluator::Date(stock, cursor);
-            buy.price = Evaluator::Indicator("ClosePrice", stock, cursor);
+            buy.time = Evaluator::Date(stock, (int) cursor);
+            buy.price = Evaluator::Indicator("ClosePrice", stock, (int) cursor);
 
             sell.signalType = StrategySignal::Sell;
             sell.timeIndex = exitPosition;
-            sell.time = Evaluator::Date(stock, exitPosition);
-            sell.price = Evaluator::Indicator("ClosePrice", stock, exitPosition);
+            sell.time = Evaluator::Date(stock, (int) exitPosition);
+            sell.price = Evaluator::Indicator("ClosePrice", stock, (int) exitPosition);
 
             output.push_back(buy);
             output.push_back(sell);
@@ -268,8 +268,8 @@ vector<ExecutionData> Backtester::BacktestMarketTiming(const vector<bool> &strat
             ExecutionData operation;
             operation.signalType = StrategySignal::Buy;
             operation.timeIndex = i;
-            operation.time = Evaluator::Date(stock, i);
-            operation.price = Evaluator::Indicator("ClosePrice", stock, i);
+            operation.time = Evaluator::Date(stock, (int) i);
+            operation.price = Evaluator::Indicator("ClosePrice", stock, (int) i);
             strategyExecutionData.push_back(operation);
             expectingEnter = false;
         }
@@ -278,8 +278,8 @@ vector<ExecutionData> Backtester::BacktestMarketTiming(const vector<bool> &strat
             ExecutionData operation;
             operation.signalType = StrategySignal::Sell;
             operation.timeIndex = i;
-            operation.time = Evaluator::Date(stock, i);
-            operation.price = Evaluator::Indicator("ClosePrice", stock, i);
+            operation.time = Evaluator::Date(stock, (int) i);
+            operation.price = Evaluator::Indicator("ClosePrice", stock, (int) i);
             strategyExecutionData.push_back(operation);
             expectingEnter = true;
         }
