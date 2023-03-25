@@ -20,7 +20,8 @@ size_t Backtester::findEntryPoint(const vector<bool>& strategySignals, unsigned 
     return strategySignals.size() - 1;
 }
 
-size_t Backtester::exitPosition(const string& stock, unsigned entryTime, double profitTake, double stopLoss, double transactionCost)
+size_t Backtester::exitPosition(const string& stock, unsigned entryTime, double profitTake, double stopLoss,
+                                double transactionCost)
 {
     vector<double>& closePrices = Evaluator::IndicatorTimeSeries("ClosePrice", stock);
 
@@ -38,8 +39,9 @@ size_t Backtester::exitPosition(const string& stock, unsigned entryTime, double 
     return closePrices.size() - 1;
 }
 
-vector<ExecutionData> Backtester::BacktestStoplossProfittake(const vector<bool>& strategySignals, const string& stock, double profitTake,
-                                                             double stopLoss, double transactionCost, int minibatchSize)
+vector<ExecutionData> Backtester::BacktestStoplossProfittake(const vector<bool>& strategySignals, const string& stock,
+                                                             double profitTake, double stopLoss, double transactionCost,
+                                                             int minibatchSize)
 {
     vector<ExecutionData> output;
     size_t cursor, exitIndex;
@@ -235,7 +237,7 @@ vector<TimingStrategySignal> Backtester::getTimingStrategySignals(vector<bool> s
     return StateMachine::Execute(strategySignalsFSM, strategyValues);
 }
 
-vector<ExecutionData> Backtester::BacktestMarketTiming(const vector<bool> &strategySignals, const string& stock,
+vector<ExecutionData> Backtester::BacktestMarketTiming(const vector<bool>& strategySignals, const string& stock,
                                                        int minibatchSize)
 {
     vector<TimingStrategySignal> signals = getTimingStrategySignals(strategySignals);

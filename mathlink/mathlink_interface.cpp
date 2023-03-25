@@ -557,10 +557,7 @@ void get_returns_for_all_stocks_timestop_hit(char const* returnFunctionName, cha
 
         vector<vector<ExecutionData>> allBacktests;
         for (auto const& [key, val] : allStockSignals)
-        {
-            allBacktests.push_back(Backtester::BacktestTimestopHit(val, key, timePeriod,
-                                                                   minibatchSize));
-        }
+            allBacktests.push_back(Backtester::BacktestTimestopHit(val, key, timePeriod, minibatchSize));
 
         MLPutFunction(stdlink, "Association", (int)stocks.size());
         for (unsigned i = 0; i < stocks.size(); i++)
