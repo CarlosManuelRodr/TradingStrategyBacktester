@@ -56,6 +56,14 @@ namespace backtester
                 volume = std::numeric_limits<double>::quiet_NaN();
             }
         }
+
+        [[nodiscard]]
+        std::string ToString() const
+        {
+            return "OCHLVData(date=" + date + ", open=" + std::to_string(open) + ", close=" +
+                   std::to_string(close) + ", high=" + std::to_string(high) + ", low=" +
+                   std::to_string(low) + ", volume=" + std::to_string(volume) + ")";
+        }
     };
 
     //*****************************

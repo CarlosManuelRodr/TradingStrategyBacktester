@@ -26,6 +26,26 @@ namespace backtester
 
         /** The price at which the transaction is executed. */
         double price;
+
+        /**
+         * Get a string representation of the strategySignal.
+         */
+        [[nodiscard]]
+        static std::string StrategySignalToString(StrategySignal strategySignal)
+        {
+            return strategySignal == StrategySignal::Buy ? "Buy" : "Sell";
+        }
+
+        /**
+         * Get string representation.
+         */
+        [[nodiscard]]
+        std::string ToString() const
+        {
+            return "ExecutionData(signalType=" + StrategySignalToString(signalType) + ", time=" + time +
+                   ", timeIndex=" + std::to_string(timeIndex) + ", price=" + std::to_string(price) + ")";
+        }
+
     };
 
     //*****************************

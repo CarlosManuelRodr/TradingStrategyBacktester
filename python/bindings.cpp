@@ -31,6 +31,13 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
             .def_readwrite("high", &OCHLVData::high)
             .def_readwrite("low", &OCHLVData::low)
             .def_readwrite("volume", &OCHLVData::volume)
+
+            .def("ToString", &OCHLVData::ToString, "Get a string representation.")
+            .def("__repr__",
+                 [](const OCHLVData& data) {
+                     return data.ToString();
+                 }
+            )
             ;
 
     py::class_<StockData>(m, "StockData")
@@ -149,6 +156,13 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
             .def_readwrite("time", &ExecutionData::time, "The time when the signal is executed.")
             .def_readwrite("timeIndex", &ExecutionData::timeIndex, "The index of the time when the signal is executed.")
             .def_readwrite("price", &ExecutionData::price, "The price at which the transaction is executed.")
+
+            .def("ToString", &ExecutionData::ToString, "Get a string representation.")
+            .def("__repr__",
+                 [](const ExecutionData& data) {
+                     return data.ToString();
+                 }
+            )
             ;
 
     py::class_<Returns>(m, "Returns")
@@ -176,18 +190,18 @@ PYBIND11_MODULE(TradingStrategyBacktester, m) {
                         &Backtester::BacktestStoplossProfittake,
                         "Backtester where the exit strategy is set in terms of profit taking and stop loss parameters.",
                         py::arg("strategySignals"), py::arg("stock"), py::arg("profitTake"),
-                        py::arg("stopLoss"), py::arg("transactionCost"), py::arg("minibatchSize"))
+                        py::arg("stopLoss"), py::arg("transactionCost"), py::arg("minibatchSize") = -1)
 
             .def_static("BacktestTimestopHit",
                         &Backtester::BacktestTimestopHit,
                         "Backtester where the exit strategy is set in terms of a time period to hold onto the asset.",
                         py::arg("strategySignals"), py::arg("stock"), py::arg("timePeriod"),
-                        py::arg("minibatchSize"))
+                        py::arg("minibatchSize") = -1)
 
             .def_static("BacktestMarketTiming",
                         &Backtester::BacktestMarketTiming,
                         "Backtester where the exit strategy is given by the strategy signals.",
-                        py::arg("strategySignals"), py::arg("stock"), py::arg("minibatchSize"))
+                        py::arg("strategySignals"), py::arg("stock"), py::arg("minibatchSize") = -1)
             ;
 }
 #pragma clang diagnostic pop
